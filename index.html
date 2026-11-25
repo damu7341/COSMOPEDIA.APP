@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmopedia — Spacecraft Encyclopedia</title>
+  <style>
+    :root {
+      --bg-deep: #050711;
+      --bg-card: rgba(14, 19, 38, 0.85);
+      --bg-infobox: rgba(20, 27, 54, 0.92);
+      --border: rgba(116, 143, 252, 0.25);
+      --text-main: #e8ecf8;
+      --text-muted: #9aa5ce;
+      --accent: #6ea8fe;
+      --accent-glow: rgba(110, 168, 254, 0.3);
+      --badge-bg: rgba(110, 168, 254, 0.14);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Georgia, serif;
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated Deep Space Background */
+    #space-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: radial-gradient(ellipse at bottom, #111936 0%, #050711 80%);
+    }
+
+    .nebula-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 20% 25%, rgba(88, 56, 178, 0.16), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(28, 110, 184, 0.15), transparent 50%);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(5, 7, 17, 0.78);
+      backdrop-filter: blur(12px);
+      padding: 1.25rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .header-inner {
+      max-width: 1060px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.65rem;
+      letter-spacing: 0.5px;
+      color: #fff;
+      text-shadow: 0 0 18px var(--accent-glow);
+    }
+
+    .brand p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+      flex: 1;
+      max-width: 440px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 0.6rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(10, 14, 28, 0.9);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    button {
+      padding: 0.55rem 0.95rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--badge-bg);
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: rgba(110, 168, 254, 0.26);
+      color: #fff;
+    }
+
+    main {
+      max-width: 1060px;
+      margin: 1.75rem auto;
+      padding: 0 1.25rem 4rem;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: #050711;
+      border-color: var(--accent);
+    }
+
+    /* Grid View */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      backdrop-filter: blur(8px);
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+
+    .card h2 {
+      font-family: Georgia, serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.4rem;
+      color: #fff;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin: 0.65rem 0;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+
+    /* Wikipedia-style Article View */
+    .article {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.75rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .article-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .article-header h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 2rem;
+      font-weight: normal;
+    }
+
+    .wiki-body {
+      display: block;
+    }
+
+    /* Wikipedia Infobox */
+    .infobox {
+      float: right;
+      width: 300px;
+      margin: 0 0 1.25rem 1.5rem;
+      background: var(--bg-infobox);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.86rem;
+      overflow: hidden;
+    }
+
+    .infobox-title {
+      background: rgba(110, 168, 254, 0.2);
+      padding: 0.6rem;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .infobox table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .infobox th, .infobox td {
+      padding: 0.5rem 0.65rem;
+      border-bottom: 1px solid rgba(116, 143, 252, 0.14);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .infobox th {
+      width: 40%;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .article h2 {
+      font-family: Georgia, serif;
+      font-weight: normal;
+      font-size: 1.4rem;
+      border-bottom: 1px solid var(--border);
+      margin: 1.5rem 0 0.75rem;
+      padding-bottom: 0.25rem;
+    }
+
+    .article p {
+      margin-bottom: 0.9rem;
+      color: #dce2f7;
+    }
+
+    .timeline {
+      border-left: 2px solid var(--accent);
+      margin-left: 0.6rem;
+      padding-left: 1.2rem;
+    }
+
+    .timeline-item {
+      margin-bottom: 1rem;
+      position: relative;
+    }
+
+    .timeline-item::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      position: absolute;
+      left: -1.55rem;
+      top: 0.4rem;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    .timeline-date {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .wiki-live-box {
+      margin-top: 2rem;
+      padding: 1.25rem;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      background: rgba(10, 14, 28, 0.6);
+    }
+
+    @media (max-width: 720px) {
+      .infobox {
+        float: none;
+        width: 100%;
+        margin: 0 0 1.25rem 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="space-canvas"></canvas>
+  <div class="nebula-overlay"></div>
+
+  <header>
+    <div class="header-inner">
+      <div class="brand">
+        <h1>Cosmopedia</h1>
+        <p>The Free Spacecraft & Spaceflight Encyclopedia</p>
+      </div>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search missions (e.g., Voyager 1, Chandrayaan-3, Cassini)..." />
+        <button id="wikiSearchBtn" title="Search Live Wikipedia">Wiki Search</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app"></main>
+
+  <script>
+    // 1. Starfield Space Background
+    const canvas = document.getElementById("space-canvas");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = Array.from({ length: 180 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.6 + 0.3,
+        alpha: Math.random(),
+        speed: Math.random() * 0.15 + 0.03
+      }));
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const s of stars) {
+        s.y -= s.speed;
+        if (s.y < 0) s.y = canvas.height;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(220, 232, 255, ${0.4 + Math.sin(Date.now() * 0.002 + s.x) * 0.35})`;
+        ctx.fill();
+      }
+      requestAnimationFrame(animateStars);
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    animateStars();
+
+    // 2. Curated Wikipedia-Style Spacecraft Database
+    const SPACECRAFT_DB = [
+      {
+        id: "sputnik-1",
+        name: "Sputnik 1",
+        agency: "Soviet Space Program",
+        status: "Completed (Deorbited)",
+        target: "Low Earth Orbit",
+        launchDate: "4 October 1957",
+        rocket: "Sputnik 8K71PS",
+        mass: "83.6 kg",
+        cospar: "1957-001B",
+        summary: "Sputnik 1 was the first artificial Earth satellite. Launched into an elliptical low Earth orbit by the Soviet Union as part of the Soviet space program, it orbited for three weeks before its three silver-zinc batteries ran out.",
+        history: "Built by OKB-1 under Sergei Korolev, the 58 cm polished metal sphere carried four external radio antennas to broadcast radio pulses. Its launch precipitated the Sputnik crisis in the United States and triggered the Space Race.",
+        instruments: "Two radio transmitters operating at 20.005 and 40.002 MHz, internal temperature and pressure switches.",
+        timeline: [
+          { date: "4 Oct 1957", title: "Launch", desc: "Lifted off from Baikonur Cosmodrome Site 1/5." },
+          { date: "26 Oct 1957", title: "Signal Loss", desc: "Onboard batteries depleted after 21 days of transmissions." },
+          { date: "4 Jan 1958", title: "Atmospheric Reentry", desc: "Burned up after completing 1,440 orbits around Earth." }
+        ]
+      },
+      {
+        id: "apollo-11",
+        name: "Apollo 11",
+        agency: "NASA",
+        status: "Completed",
+        target: "Moon (Sea of Tranquility)",
+        launchDate: "16 July 1969",
+        rocket: "Saturn V",
+        mass: "43,901 kg (total spacecraft)",
+        cospar: "1969-059A",
+        summary: "Apollo 11 was the American spaceflight that first landed humans on the Moon. Commander Neil Armstrong and Lunar Module Pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969.",
+        history: "The spacecraft consisted of three parts: Command Module Columbia, Service Module, and Lunar Module Eagle. Armstrong became the first person to step onto the lunar surface six hours and 39 minutes after landing.",
+        instruments: "Early Apollo Scientific Experiments Package (EASEP), Passive Seismic Experiment, Laser Ranging Retroreflector.",
+        timeline: [
+          { date: "16 Jul 1969", title: "Launch", desc: "Launched from Kennedy Space Center Launch Complex 39A." },
+          { date: "20 Jul 1969", title: "Lunar Landing", desc: "Eagle touched down at Tranquility Base at 20:17 UTC." },
+          { date: "21 Jul 1969", title: "First Moonwalk", desc: "Armstrong and Aldrin spent 2 hours 31 minutes outside the spacecraft." },
+          { date: "24 Jul 1969", title: "Splashdown", desc: "Columbia splashed down safely in the North Pacific Ocean." }
+        ]
+      },
+      {
+        id: "voyager-1",
+        name: "Voyager 1",
+        agency: "NASA",
+        status: "Active (Interstellar Space)",
+        target: "Jupiter, Saturn, Interstellar Medium",
+        launchDate: "5 September 1977",
+        rocket: "Titan IIIE",
+        mass: "825.5 kg",
+        cospar: "1977-084A",
+        summary: "Voyager 1 is a space probe launched by NASA to study the outer Solar System and interstellar space beyond the Sun's heliosphere. It is the most distant human-made object from Earth.",
+        history: "Operating for nearly five decades, Voyager 1 conducted flybys of Jupiter (1979) and Saturn (1980), capturing detailed images of their moons and ring systems before crossing the heliopause in August 2012.",
+        instruments: "Cosmic Ray Subsystem (CRS), Low-Energy Charged Particles (LECP), Magnetometer (MAG), Plasma Wave Subsystem (PWS).",
+        timeline: [
+          { date: "5 Sep 1977", title: "Launch", desc: "Launched from Cape Canaveral 16 days after Voyager 2." },
+          { date: "5 Mar 1979", title: "Jupiter Flyby", desc: "Discovered active volcanism on Io." },
+          { date: "12 Nov 1980", title: "Saturn Flyby", desc: "Investigated Titan's dense nitrogen-rich atmosphere." },
+          { date: "25 Aug 2012", title: "Interstellar Entry", desc: "Became the first spacecraft to enter interstellar space." }
+        ]
+      },
+      {
+        id: "hubble",
+        name: "Hubble Space Telescope",
+        agency: "NASA / ESA",
+        status: "Active",
+        target: "Low Earth Orbit",
+        launchDate: "24 April 1990",
+        rocket: "Space Shuttle Discovery (STS-31)",
+        mass: "11,110 kg",
+        cospar: "1990-037B",
+        summary: "The Hubble Space Telescope (HST) is a space telescope placed into low Earth orbit in 1990 that remains in operation. Featuring a 2.4-meter mirror, it observes in ultraviolet, visible, and near-infrared spectra.",
+        history: "Shortly after launch, Hubble's main mirror was found to have spherical aberration. Five Space Shuttle servicing missions between 1993 and 2009 corrected the optics and upgraded its instruments.",
+        instruments: "Wide Field Camera 3 (WFC3), Cosmic Origins Spectrograph (COS), Advanced Camera for Surveys (ACS).",
+        timeline: [
+          { date: "24 Apr 1990", title: "Deployment", desc: "Deployed from Space Shuttle Discovery." },
+          { date: "Dec 1993", title: "Servicing Mission 1", desc: "COSTAR corrective optics installed by astronauts." },
+          { date: "1995", title: "Hubble Deep Field", desc: "Revealed thousands of distant galaxies in a tiny patch of sky." }
+        ]
+      },
+      {
+        id: "iss",
+        name: "International Space Station",
+        agency: "NASA / Roscosmos / JAXA / ESA / CSA",
+        status: "Active",
+        target: "Low Earth Orbit (~408 km)",
+        launchDate: "20 November 1998",
+        rocket: "Proton-K / Space Shuttle / Soyuz",
+        mass: "~450,000 kg",
+        cospar: "1998-067A",
+        summary: "The International Space Station (ISS) is the largest modular space station in low Earth orbit. It serves as a microgravity and space environment research laboratory for astrobiology, astronomy, meteorology, and physics.",
+        history: "Assembled in orbit over more than 40 assembly flights beginning with the Zarya module in 1998, the station has been continuously occupied since Expedition 1 arrived in November 2000.",
+        instruments: "Alpha Magnetic Spectrometer (AMS-02), Kibō Japanese Experiment Module, Columbus Laboratory, Canadarm2.",
+        timeline: [
+          { date: "20 Nov 1998", title: "First Module", desc: "Zarya control module launched aboard a Proton-K rocket." },
+          { date: "2 Nov 2000", title: "Continuous Crew", desc: "Expedition 1 docked, beginning uninterrupted human presence." },
+          { date: "2011", title: "Core Assembly Complete", desc: "Final US pressurized modules installed." }
+        ]
+      },
+      {
+        id: "curiosity",
+        name: "Curiosity (Mars Science Laboratory)",
+        agency: "NASA",
+        status: "Active",
+        target: "Mars (Gale Crater)",
+        launchDate: "26 November 2011",
+        rocket: "Atlas V 541",
+        mass: "899 kg",
+        cospar: "2011-070A",
+        summary: "Curiosity is a car-sized Mars rover exploring Gale Crater and Mount Sharp on Mars. Powered by a radioisotope thermoelectric generator (RTG), it investigates Martian climate, geology, and past habitability.",
+        history: "Landed via an innovative sky crane maneuver in August 2012, Curiosity confirmed that ancient Gale Crater once held a freshwater lake system capable of supporting microbial life.",
+        instruments: "ChemCam laser spectrometer, Sample Analysis at Mars (SAM), Mastcam, Radiation Assessment Detector (RAD).",
+        timeline: [
+          { date: "26 Nov 2011", title: "Launch", desc: "Launched from Cape Canaveral." },
+          { date: "6 Aug 2012", title: "Sky Crane Landing", desc: "Touched down at Bradbury Landing inside Gale Crater." },
+          { date: "2014", title: "Mount Sharp Ascent", desc: "Reached the base of Aeolis Mons (Mount Sharp)." }
+        ]
+      },
+      {
+        id: "jwst",
+        name: "James Webb Space Telescope",
+        agency: "NASA / ESA / CSA",
+        status: "Active",
+        target: "Sun–Earth L2 Lagrange Point",
+        launchDate: "25 December 2021",
+        rocket: "Ariane 5 ECA",
+        mass: "6,161.4 kg",
+        cospar: "2021-130A",
+        summary: "The James Webb Space Telescope (JWST) is the largest optical telescope in space. Its 6.5-meter gold-coated beryllium segmented primary mirror enables high-resolution infrared astronomy.",
+        history: "Stationed 1.5 million km from Earth at L2 and shielded by a five-layer tennis-court-sized sunshield, JWST observes the earliest galaxies formed after the Big Bang and analyzes exoplanet atmospheres.",
+        instruments: "NIRCam, NIRSpec, Mid-Infrared Instrument (MIRI), Fine Guidance Sensor / NIRISS.",
+        timeline: [
+          { date: "25 Dec 2021", title: "Launch", desc: "Launched from Kourou, French Guiana on Ariane 5." },
+          { date: "24 Jan 2022", title: "L2 Arrival", desc: "Entered halo orbit around the Sun–Earth L2 point." },
+          { date: "11 Jul 2022", title: "First Deep Field", desc: "Released SMACS 0723 image showing the deepest infrared view of the universe." }
+        ]
+      },
+      {
+        id: "chandrayaan-3",
+        name: "Chandrayaan-3",
+        agency: "ISRO",
+        status: "Completed",
+        target: "Moon (South Polar Region)",
+        launchDate: "14 July 2023",
+        rocket: "LVM3 M4",
+        mass: "3,900 kg (total)",
+        cospar: "2023-098A",
+        summary: "Chandrayaan-3 is the third lunar exploration mission by the Indian Space Research Organisation (ISRO). It made India the fourth country to soft-land on the Moon and the first to land near the lunar south pole.",
+        history: "Consisting of a propulsion module, the Vikram lander, and the Pragyan rover, the mission demonstrated safe lunar landing, roving capabilities, and in-situ scientific experiments at Statio Shiv Shakti.",
+        instruments: "ChaSTE thermal probe, ILSA seismometer, RAMBHA Langmuir probe, APXS and LIBS spectrometers on Pragyan.",
+        timeline: [
+          { date: "14 Jul 2023", title: "Launch", desc: "Lifted off from Satish Dhawan Space Centre, Sriharikota." },
+          { date: "5 Aug 2023", title: "Lunar Orbit Insertion", desc: "Successfully entered elliptical orbit around the Moon." },
+          { date: "23 Aug 2023", title: "Soft Landing", desc: "Vikram touched down near 69.37°S; Pragyan rover deployed." },
+          { date: "4 Sep 2023", title: "Sleep Mode", desc: "Lander and rover entered sleep mode at the onset of lunar night." }
+        ]
+      }
+    ];
+
+    let currentFilter = "ALL";
+    let searchQuery = "";
+    let selectedId = null;
+    let favorites = JSON.parse(localStorage.getItem("cosmopedia_favs") || "[]");
+
+    const app = document.getElementById("app");
+    const searchInput = document.getElementById("searchInput");
+
+    function toggleFav(id) {
+      if (favorites.includes(id)) {
+        favorites = favorites.filter(f => f !== id);
+      } else {
+        favorites.push(id);
+      }
+      localStorage.setItem("cosmopedia_favs", JSON.stringify(favorites));
+      render();
+    }
+
+    // Live Wikipedia API Fallback for ANY spacecraft in history
+    async function fetchWikipediaArticle(query) {
+      app.innerHTML = `<div class="article"><p>Searching Wikipedia spaceflight archives for "<strong>${query}</strong>"...</p></div>`;
+      try {
+        const searchRes = await fetch(
+          `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(query + " spacecraft mission")}&format=json&origin=*`
+        );
+        const searchData = await searchRes.json();
+        const topHit = searchData?.query?.search?.[0];
+
+        if (!topHit) {
+          app.innerHTML = `<div class="article"><button onclick="selectedId=null;render()">← Back to Encyclopedia</button><h2>No entry found</h2><p>Could not find a spacecraft entry matching "${query}".</p></div>`;
+          return;
+        }
+
+        const summaryRes = await fetch(
+          `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(topHit.title)}`
+        );
+        const page = await summaryRes.json();
+
+        app.innerHTML = `
+          <div class="article">
+            <div class="article-header">
+              <div>
+                <button onclick="selectedId=null;render()" style="margin-bottom:0.6rem;">← Back to all spacecraft</button>
+                <h1>${page.title}</h1>
+              </div>
+              <a href="${page.content_urls?.desktop?.page || '#'}" target="_blank" rel="noopener">
+                <button>Read Full Article on Wikipedia ↗</button>
+              </a>
+            </div>
+            <div class="wiki-body">
+              <aside class="infobox">
+                <div class="infobox-title">${page.title}</div>
+                <table>
+                  <tr><th>Category</th><td>${page.description || "Spacecraft / Mission"}</td></tr>
+                  <tr><th>Source</th><td>Wikipedia Live Archive</td></tr>
+                </table>
+              </aside>
+              <p>${page.extract}</p>
+            </div>
+          </div>
+        `;
+      } catch (err) {
+        app.innerHTML = `<div class="article"><button onclick="selectedId=null;render()">← Back</button><p>Unable to connect to Wikipedia archive. Please check your internet connection.</p></div>`;
+      }
+    }
+
+    function render() {
+      if (selectedId) {
+        const item = SPACECRAFT_DB.find(s => s.id === selectedId);
+        if (!item) { selectedId = null; render(); return; }
+        const isFav = favorites.includes(item.id);
+
+        app.innerHTML = `
+          <article class="article">
+            <div class="article-header">
+              <div>
+                <button onclick="selectedId=null;render()" style="margin-bottom:0.65rem;">← Back to all spacecraft</button>
+                <h1>${item.name}</h1>
+              </div>
+              <button onclick="toggleFav('${item.id}')">${isFav ? "★ Saved in Favorites" : "☆ Save to Favorites"}</button>
+            </div>
+
+            <div class="wiki-body">
+              <aside class="infobox">
+                <div class="infobox-title">${item.name}</div>
+                <table>
+                  <tr><th>Operator</th><td>${item.agency}</td></tr>
+                  <tr><th>Mission Type</th><td>${item.target}</td></tr>
+                  <tr><th>COSPAR ID</th><td>${item.cospar}</td></tr>
+                  <tr><th>Launch Date</th><td>${item.launchDate}</td></tr>
+                  <tr><th>Rocket</th><td>${item.rocket}</td></tr>
+                  <tr><th>Launch Mass</th><td>${item.mass}</td></tr>
+                  <tr><th>Status</th><td>${item.status}</td></tr>
+                </table>
+              </aside>
+
+              <p>${item.summary}</p>
+
+              <h2>History & Design</h2>
+              <p>${item.history}</p>
+
+              <h2>Scientific Instruments</h2>
+              <p>${item.instruments}</p>
+
+              <h2>Mission Timeline</h2>
+              <div class="timeline">
+                ${item.timeline.map(t => `
+                  <div class="timeline-item">
+                    <div class="timeline-date">${t.date}</div>
+                    <strong>${t.title}</strong>
+                    <p style="margin:0.2rem 0 0;font-size:0.92rem;">${t.desc}</p>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          </article>
+        `;
+        return;
+      }
+
+      const agencies = ["ALL", "FAVORITES", "NASA", "ISRO", "Soviet", "ESA"];
+      const filtered = SPACECRAFT_DB.filter(s => {
+        const matchesSearch =
+          s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.target.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.agency.toLowerCase().includes(searchQuery.toLowerCase());
+        if (!matchesSearch) return false;
+        if (currentFilter === "ALL") return true;
+        if (currentFilter === "FAVORITES") return favorites.includes(s.id);
+        return s.agency.toLowerCase().includes(currentFilter.toLowerCase());
+      });
+
+      app.innerHTML = `
+        <div class="filters">
+          ${agencies.map(a => `
+            <button class="filter-btn ${currentFilter === a ? "active" : ""}" onclick="currentFilter='${a}';render()">
+              ${a === "FAVORITES" ? `★ Favorites (${favorites.length})` : a}
+            </button>
+          `).join("")}
+        </div>
+
+        <div class="grid">
+          ${filtered.map(s => `
+            <div class="card" onclick="selectedId='${s.id}';render()">
+              <div>
+                <h2>${s.name}</h2>
+                <div class="tags">
+                  <span class="tag">${s.agency}</span>
+                  <span class="tag">${s.launchDate}</span>
+                </div>
+                <p style="font-size:0.9rem;color:#c5ceec;">${s.summary.slice(0, 135)}...</p>
+              </div>
+              <div style="margin-top:0.85rem;font-size:0.82rem;color:var(--accent);">Read encyclopedia entry →</div>
+            </div>
+          `).join("")}
+        </div>
+
+        ${searchQuery.trim() ? `
+          <div class="wiki-live-box">
+            <p>Looking for a spacecraft not listed above? Search the full live Wikipedia database for <strong>"${searchQuery}"</strong>.</p>
+            <button style="margin-top:0.65rem;" onclick="fetchWikipediaArticle('${searchQuery.replace(/'/g, "\\'")}')">
+              Search All Spacecraft on Wikipedia →
+            </button>
+          </div>
+        ` : ""}
+      `;
+    }
+
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      selectedId = null;
+      render();
+    });
+
+    document.getElementById("wikiSearchBtn").addEventListener("click", () => {
+      if (searchInput.value.trim()) fetchWikipediaArticle(searchInput.value.trim());
+    });
+
+    render();
+  </script>
+</body>
+</html>
