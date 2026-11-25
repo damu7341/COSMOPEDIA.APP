@@ -1,0 +1,16 @@
+{
+  "name": "Cosmopedia",
+  "short_name": "Cosmopedia",
+  "start_url": "/cosmopedia/",
+  "display": "standalone",
+  "background_color": "#04060e",
+  "theme_color": "#04060e",
+  "description": "Universal Spacecraft & Spaceflight Encyclopedia",
+  "icons": [
+    {
+      "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/512px-NASA_logo.svg.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
