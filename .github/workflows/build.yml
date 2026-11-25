@@ -33,7 +33,7 @@ jobs:
 
       - name: Generate Release AAB & APK
         working-directory: android
-        run: |
+        run: 
           chmod +x gradlew
           ./gradlew bundleRelease assembleDebug
 
