@@ -12,7 +12,8 @@ Search any spacecraft and explore its full mission story, from launch to the end
 - Works offline
 
 ## Built with
-- [Flutter](https://flutter.dev)
+- INDEX>HTML
+-JSON
 - Spacecraft data stored in `assets/spacecraft.json`
 
 ## Run locally
