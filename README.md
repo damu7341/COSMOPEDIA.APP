@@ -1,7 +1,7 @@
 # Cosmopedia 🚀
 VISIT IT:-
 
-https://github.com/damu7341/cosmopedia
+https://github.com/damu7341/cosmopedia.APP
 Search any spacecraft and explore its full mission story, from launch to the end of its mission.
 
 ## Features
