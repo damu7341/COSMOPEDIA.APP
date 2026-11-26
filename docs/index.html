@@ -1,22 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cosmopedia Privacy Policy</title>
-<style>body{font-family:system-ui,sans-serif;max-width:700px;margin:24px auto;padding:0 16px;line-height:1.6}</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmopedia — Universal Spacecraft Encyclopedia</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#050814" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #050814 100%);
+      color: #e6edf3;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    /* Animated Starfield Space Background */
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, transparent),
+        radial-gradient(1px 1px at 90px 140px, #a5d6ff, transparent),
+        radial-gradient(2px 2px at 180px 80px, #ffffff, transparent),
+        radial-gradient(1px 1px at 260px 210px, #d2a8ff, transparent),
+        radial-gradient(1.5px 1.5px at 320px 40px, #ffffff, transparent);
+      background-size: 350px 260px;
+      animation: drift 60s linear infinite;
+      opacity: 0.75;
+    }
+    @keyframes drift {
+      from { transform: translateY(0); }
+      to { transform: translateY(-260px); }
+    }
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 60px;
+    }
+    header {
+      text-align: center;
+      padding: 24px 0 20px;
+      border-bottom: 1px solid rgba(139, 148, 158, 0.25);
+      margin-bottom: 20px;
+    }
+    header h1 {
+      font-size: 2rem;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #58a6ff, #bc8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p { color: #8b949e; font-size: 0.92rem; margin-top: 6px; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      background: rgba(22, 27, 34, 0.9);
+      border: 1px solid #30363d;
+      color: #e6edf3;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    input { flex: 1; min-width: 220px; }
+    button {
+      background: #238636;
+      border-color: #2ea043;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button.secondary { background: #1f6feb; border-color: #388bfd; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: rgba(13, 17, 23, 0.85);
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .card:hover { transform: translateY(-3px); border-color: #58a6ff; }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(56, 139, 253, 0.15);
+      color: #58a6ff;
+      margin-bottom: 8px;
+    }
+    .card h3 { font-size: 1.15rem; margin-bottom: 6px; }
+    .card p { font-size: 0.88rem; color: #8b949e; line-height: 1.4; }
+    /* Wikipedia-Style Article View */
+    .article {
+      display: none;
+      background: rgba(13, 17, 23, 0.94);
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 22px;
+      line-height: 1.65;
+    }
+    .article.active { display: block; }
+    .infobox {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 14px 0 20px;
+    }
+    .infobox table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .infobox th { text-align: left; color: #8b949e; padding: 6px 8px; width: 38%; border-bottom: 1px solid #21262d; }
+    .infobox td { padding: 6px 8px; border-bottom: 1px solid #21262d; }
+    .article h2 {
+      font-size: 1.25rem;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 6px;
+      margin: 20px 0 10px;
+      color: #79c0ff;
+    }
+    .back-btn { margin-bottom: 14px; background: #30363d; border-color: #484f58; }
+  </style>
 </head>
 <body>
-<h1>Cosmopedia Privacy Policy</h1>
-<p>Last updated: 26 November 2026</p>
-<p>Cosmopedia does not collect, store on a server, or share any personal information.</p>
-<h2>Data on your device</h2>
-<p>If you mark spacecraft as favorites, that list is saved only on your device. It is never sent to us or anyone else.</p>
-<h2>No accounts, ads or tracking</h2>
-<p>The app has no sign-in, no advertising, and no analytics or tracking tools.</p>
-<h2>Internet use</h2>
-<p>All spacecraft information is stored inside the app. The app works offline. Source links open in your browser, and those websites have their own privacy policies.</p>
-<h2>Contact</h2>
-<p>Questions: <a href="mailto:YOUR_EMAIL@example.com">damu.7341@gmail.com</a></p>
+  <div class="stars"></div>
+  <div class="container">
+    <header>
+      <h1>COSMOPEDIA</h1>
+      <p>The Free Encyclopedia of Human & Robotic Spacecraft</p>
+    </header>
+
+    <div id="listView">
+      <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search any spacecraft (e.g., Apollo 11, Sputnik, Chandrayaan)..." />
+        <select id="agencyFilter">
+          <option value="ALL">All Agencies</option>
+          <option value="NASA">NASA</option>
+          <option value="ISRO">ISRO</option>
+          <option value="Soviet Space Program">Soviet / Roscosmos</option>
+          <option value="ESA">ESA</option>
+          <option value="SpaceX">SpaceX</option>
+        </select>
+        <button class="secondary" onclick="searchWikipedia()">Search Global Archive</button>
+      </div>
+      <div id="cardsGrid" class="grid"></div>
+    </div>
+
+    <div id="articleView" class="article">
+      <button class="back-btn" onclick="closeArticle()">← Back to Spacecraft Directory</button>
+      <div id="articleContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const SPACECRAFT_DB = [
+      {
+        name: "Sputnik 1",
+        agency: "Soviet Space Program",
+        launchDate: "4 October 1957",
+        crew: "Uncrewed (First artificial Earth satellite)",
+        software: "Analog electromechanical timer & thermal relay logic (pre-digital onboard computer)",
+        destination: "Low Earth Orbit",
+        overview: "Sputnik 1 was the first artificial Earth satellite, launched into an elliptical low Earth orbit by the Soviet Union as part of the International Geophysical Year. Its radio pulses were detectable around the world and inaugurated the Space Age.",
+        history: "Designed by Sergei Korolev and Mikhail Tikhonravov, Sputnik 1 was a 58 cm polished metal sphere with four external radio antennas broadcasting on 20.005 and 40.002 MHz for 21 days until its transmitter batteries depleted.",
+        avionics: "Rather than modern stored-program software, Sputnik 1 relied on hardwired relay switching sequences, pressure-sensitive switches, and fan-driven thermal regulation loops inside its pressurized nitrogen interior."
+      },
+      {
+        name: "Apollo 11",
+        agency: "NASA",
+        launchDate: "16 July 1969",
+        crew: "Neil Armstrong (Commander), Buzz Aldrin (Lunar Module Pilot), Michael Collins (Command Module Pilot)",
+        software: "Apollo Guidance Computer (AGC) — Luminary (LM) & Comanche (CSM) written in AGC Assembly",
+        destination: "Moon (Sea of Tranquility)",
+        overview: "Apollo 11 was the American spaceflight that first landed humans on the Moon. Commander Neil Armstrong and Lunar Module Pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969.",
+        history: "Launched by a Saturn V rocket from Kennedy Space Center, Apollo 11 entered lunar orbit after three days. Armstrong and Aldrin spent 21 hours, 36 minutes on the lunar surface and collected 21.5 kg of lunar material.",
+        avionics: "Powered by the Apollo Guidance Computer (AGC) with software led by Margaret Hamilton at MIT Instrumentation Laboratory. Its priority-scheduled executive system famously recovered from 1202 and 1201 program alarms during lunar descent by shedding low-priority radar tasks."
+      },
+      {
+        name: "Voyager 1",
+        agency: "NASA",
+        launchDate: "5 September 1977",
+        crew: "Uncrewed Interstellar Probe",
+        software: "Custom Assembly on CCS (Computer Command Subsystem), FDS (Flight Data Subsystem), and AACS",
+        destination: "Jupiter, Saturn & Interstellar Space",
+        overview: "Voyager 1 is a space probe launched by NASA to study the outer Solar System and interstellar space beyond the Sun's heliosphere. It is the most distant human-made object from Earth.",
+        history: "After completing flybys of Jupiter (1979) and Saturn (1980), Voyager 1 crossed the heliopause on 25 August 2012, becoming the first spacecraft to enter interstellar space.",
+        avionics: "Runs on three redundant dual-processor computer systems with roughly 69.63 KB of total memory combined. Engineers continue to patch its Assembly code remotely from Earth across a 22+ hour one-way light-time delay."
+      },
+      {
+        name: "Chandrayaan-3",
+        agency: "ISRO",
+        launchDate: "14 July 2023",
+        crew: "Uncrewed (Vikram Lander & Pragyan Rover)",
+        software: "Real-Time Operating System (RTOS) with Autonomous Hazard Detection & Avoidance (HDA) C/C++ flight code",
+        destination: "Moon (South Polar Region — Statio Shiv Shakti)",
+        overview: "Chandrayaan-3 is the third lunar exploration mission by the Indian Space Research Organisation (ISRO). On 23 August 2023, India became the fourth nation to soft-land on the Moon and the first near the lunar south pole.",
+        history: "Launched aboard an LVM3-M4 rocket from Satish Dhawan Space Centre, the propulsion module carried the Vikram lander and Pragyan rover to a 100 km circular lunar orbit before powered descent.",
+        avionics: "Uses closed-loop autonomous guidance, Laser Doppler Velocimeter (LDV), and camera-based Hazard Detection and Avoidance software designed to survive sensor failures and select safe landing terrain without real-time ground intervention."
+      },
+      {
+        name: "Crew Dragon Endeavour (Demo-2)",
+        agency: "SpaceX",
+        launchDate: "30 May 2020",
+        crew: "Doug Hurley, Bob Behnken",
+        software: "Flight-critical C++ on Linux (x86 triple-redundant processors) + Chromium/JavaScript touchscreen UI",
+        destination: "International Space Station (Low Earth Orbit)",
+        overview: "Crew Dragon Demo-2 was the first crewed test flight of the SpaceX Crew Dragon spacecraft, restoring human orbital spaceflight capability from the United States.",
+        history: "Launched atop a Falcon 9 rocket from LC-39A, Endeavour autonomously docked with the International Space Station 19 hours later and returned safely via splashdown on 2 August 2020.",
+        avionics: "Operates on three dual-core x86 processors running a hardened Linux kernel with custom C++ flight software using an actor-model architecture, paired with touchscreen displays built using Chromium and JavaScript."
+      },
+      {
+        name: "Rosetta",
+        agency: "ESA",
+        launchDate: "2 March 2004",
+        crew: "Uncrewed (Orbiter + Philae Lander)",
+        software: "Ada & C flight software on MIL-STD-1750A processors with RTEMS real-time kernel",
+        destination: "Comet 67P/Churyumov–Gerasimenko",
+        overview: "Rosetta was a space probe built by the European Space Agency that performed the first detailed study of a comet from orbit and deployed the Philae lander onto its surface.",
+        history: "Following a 10-year journey using Earth and Mars gravity assists, Rosetta rendezvoused with Comet 67P in August 2014 and deployed Philae on 12 November 2014.",
+        avionics: "Built using high-reliability Ada and C real-time software capable of autonomous deep-space hibernation and wake-up sequences after 31 months in cold deep space."
+      }
+    ];
+
+    const grid = document.getElementById("cardsGrid");
+    const searchInput = document.getElementById("searchInput");
+    const agencyFilter = document.getElementById("agencyFilter");
+
+    function renderCards(list) {
+      grid.innerHTML = list.map((sc, idx) => `
+        <div class="card" onclick="openArticle(${SPACECRAFT_DB.indexOf(sc)})">
+          <span class="badge">${sc.agency} • ${sc.launchDate}</span>
+          <h3>${sc.name}</h3>
+          <p>${sc.overview.slice(0, 120)}...</p>
+        </div>
+      `).join("");
+    }
+
+    function filterLocal() {
+      const q = searchInput.value.toLowerCase();
+      const ag = agencyFilter.value;
+      const filtered = SPACECRAFT_DB.filter(sc => {
+        const matchesAgency = ag === "ALL" || sc.agency.includes(ag);
+        const matchesText = sc.name.toLowerCase().includes(q) ||
+          sc.agency.toLowerCase().includes(q) ||
+          sc.crew.toLowerCase().includes(q) ||
+          sc.software.toLowerCase().includes(q);
+        return matchesAgency && matchesText;
+      });
+      renderCards(filtered);
+    }
+
+    function openArticle(index) {
+      const sc = SPACECRAFT_DB[index];
+      document.getElementById("listView").style.display = "none";
+      const articleView = document.getElementById("articleView");
+      articleView.classList.add("active");
+      document.getElementById("articleContent").innerHTML = `
+        <h1>${sc.name}</h1>
+        <div class="infobox">
+          <table>
+            <tr><th>Organisation</th><td>${sc.agency}</td></tr>
+            <tr><th>Launch Date</th><td>${sc.launchDate}</td></tr>
+            <tr><th>Destination</th><td>${sc.destination}</td></tr>
+            <tr><th>Crew</th><td>${sc.crew}</td></tr>
+            <tr><th>Flight Software</th><td>${sc.software}</td></tr>
+          </table>
+        </div>
+        <h2>Overview</h2>
+        <p>${sc.overview}</p>
+        <h2>Mission History</h2>
+        <p>${sc.history}</p>
+        <h2>Software & Avionics Architecture</h2>
+        <p>${sc.avionics}</p>
+      `;
+    }
+
+    async function searchWikipedia() {
+      const query = searchInput.value.trim();
+      if (!query) return;
+      grid.innerHTML = "<p>Searching global spacecraft archives...</p>";
+      try {
+        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
+        if (!res.ok) throw new Error("Not found");
+        const data = await res.json();
+        document.getElementById("listView").style.display = "none";
+        const articleView = document.getElementById("articleView");
+        articleView.classList.add("active");
+        document.getElementById("articleContent").innerHTML = `
+          <h1>${data.title}</h1>
+          <div class="infobox">
+            <table>
+              <tr><th>Archive Source</th><td>Global Space Encyclopedia (Wikipedia API)</td></tr>
+              <tr><th>Classification</th><td>${data.description || "Spacecraft / Space Mission"}</td></tr>
+            </table>
+          </div>
+          <h2>Encyclopedia Summary</h2>
+          <p>${data.extract}</p>
+        `;
+      } catch (e) {
+        grid.innerHTML = "<p>No exact spacecraft article found. Try searching the full mission name (e.g., 'Voyager 2' or 'Artemis 1').</p>";
+      }
+    }
+
+    function closeArticle() {
+      document.getElementById("articleView").classList.remove("active");
+      document.getElementById("listView").style.display = "block";
+      filterLocal();
+    }
+
+    searchInput.addEventListener("input", filterLocal);
+    agencyFilter.addEventListener("change", filterLocal);
+    renderCards(SPACECRAFT_DB);
+  </script>
 </body>
 </html>
