@@ -1,0 +1,137 @@
+[
+  {
+    "id": "sputnik-1", "name": "Sputnik 1", "agency": "Soviet Union", "destination": "Earth orbit", "launch_year": 1957,
+    "summary": "The first artificial satellite, launched by the Soviet Union.",
+    "crew": [],
+    "software": [{"name": "None (no onboard computer)", "purpose": "Simple radio beacon"}],
+    "companies": [{"name": "OKB-1 (Sergei Korolev)", "contribution": "Design and development"}],
+    "timeline": [{"date": "1957-10-04", "event": "Launch"}, {"date": "1958-01-04", "event": "Re-entered atmosphere and burned up"}],
+    "sources": ["https://en.wikipedia.org/wiki/Sputnik_1"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "vostok-1", "name": "Vostok 1", "agency": "Soviet Union", "destination": "Earth orbit", "launch_year": 1961,
+    "summary": "First crewed spaceflight; one orbit of Earth.",
+    "crew": [{"name": "Yuri Gagarin", "role": "Cosmonaut"}],
+    "software": [],
+    "companies": [{"name": "OKB-1 (Sergei Korolev)", "contribution": "Spacecraft and rocket design"}],
+    "timeline": [{"date": "1961-04-12", "event": "Launch, one orbit, landing after about 108 minutes"}],
+    "sources": ["https://en.wikipedia.org/wiki/Vostok_1"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "apollo-11", "name": "Apollo 11", "agency": "NASA", "destination": "Moon", "launch_year": 1969,
+    "summary": "First crewed Moon landing.",
+    "crew": [{"name": "Neil Armstrong", "role": "Commander"}, {"name": "Buzz Aldrin", "role": "Lunar Module Pilot"}, {"name": "Michael Collins", "role": "Command Module Pilot"}],
+    "software": [{"name": "Colossus", "purpose": "Apollo Guidance Computer software, Command Module"}, {"name": "Luminary", "purpose": "Apollo Guidance Computer software, Lunar Module"}],
+    "companies": [{"name": "MIT Instrumentation Laboratory", "contribution": "Guidance computer and software"}, {"name": "Grumman", "contribution": "Lunar Module"}, {"name": "North American Aviation", "contribution": "Command and Service Module"}, {"name": "Boeing", "contribution": "Saturn V first stage"}],
+    "timeline": [{"date": "1969-07-16", "event": "Launch"}, {"date": "1969-07-20", "event": "Lunar landing"}, {"date": "1969-07-24", "event": "Splashdown in the Pacific"}],
+    "sources": ["https://en.wikipedia.org/wiki/Apollo_11"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "voyager-1", "name": "Voyager 1", "agency": "NASA", "destination": "Interstellar space", "launch_year": 1977,
+    "summary": "Flew past Jupiter and Saturn, then became the first spacecraft to reach interstellar space.",
+    "crew": [],
+    "software": [{"name": "Onboard computers (CCS, FDS, AACS)", "purpose": "Command, data handling, attitude control"}],
+    "companies": [{"name": "Jet Propulsion Laboratory", "contribution": "Mission management and operations"}],
+    "timeline": [{"date": "1977-09-05", "event": "Launch"}, {"date": "1979-03-05", "event": "Jupiter flyby"}, {"date": "1980-11-12", "event": "Saturn flyby"}, {"date": "2012-08-25", "event": "Entered interstellar space"}],
+    "sources": ["https://en.wikipedia.org/wiki/Voyager_1"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "hubble", "name": "Hubble Space Telescope", "agency": "NASA / ESA", "destination": "Earth orbit", "launch_year": 1990,
+    "summary": "Space telescope in low Earth orbit, serviced by Space Shuttle crews.",
+    "crew": [],
+    "software": [],
+    "companies": [{"name": "Lockheed", "contribution": "Spacecraft"}, {"name": "Perkin-Elmer", "contribution": "Primary mirror"}],
+    "timeline": [{"date": "1990-04-24", "event": "Launch on Space Shuttle Discovery (STS-31)"}, {"date": "1993-12", "event": "First servicing mission corrected mirror flaw"}, {"date": "2009-05", "event": "Final servicing mission"}],
+    "sources": ["https://en.wikipedia.org/wiki/Hubble_Space_Telescope"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "cassini-huygens", "name": "Cassini-Huygens", "agency": "NASA / ESA / ASI", "destination": "Saturn", "launch_year": 1997,
+    "summary": "Saturn orbiter and Titan lander.",
+    "crew": [],
+    "software": [],
+    "companies": [{"name": "Jet Propulsion Laboratory", "contribution": "Orbiter management"}],
+    "timeline": [{"date": "1997-10-15", "event": "Launch"}, {"date": "2004-07-01", "event": "Entered Saturn orbit"}, {"date": "2005-01-14", "event": "Huygens landed on Titan"}, {"date": "2017-09-15", "event": "Mission ended with planned plunge into Saturn"}],
+    "sources": ["https://en.wikipedia.org/wiki/Cassini%E2%80%93Huygens"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "iss", "name": "International Space Station", "agency": "NASA / Roscosmos / ESA / JAXA / CSA", "destination": "Earth orbit", "launch_year": 1998,
+    "summary": "Continuously crewed space station assembled in orbit.",
+    "crew": [{"name": "William Shepherd", "role": "Expedition 1 Commander"}, {"name": "Yuri Gidzenko", "role": "Expedition 1 Soyuz Commander"}, {"name": "Sergei Krikalev", "role": "Expedition 1 Flight Engineer"}],
+    "software": [],
+    "companies": [{"name": "Boeing", "contribution": "US segment prime contractor"}, {"name": "RSC Energia", "contribution": "Russian segment"}],
+    "timeline": [{"date": "1998-11-20", "event": "First module, Zarya, launched"}, {"date": "2000-11-02", "event": "Expedition 1 arrived; continuous crew since"}],
+    "sources": ["https://en.wikipedia.org/wiki/International_Space_Station"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "shenzhou-5", "name": "Shenzhou 5", "agency": "CNSA", "destination": "Earth orbit", "launch_year": 2003,
+    "summary": "China's first crewed spaceflight.",
+    "crew": [{"name": "Yang Liwei", "role": "Taikonaut"}],
+    "software": [],
+    "companies": [],
+    "timeline": [{"date": "2003-10-15", "event": "Launch and landing after about 21 hours"}],
+    "sources": ["https://en.wikipedia.org/wiki/Shenzhou_5"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "chandrayaan-1", "name": "Chandrayaan-1", "agency": "ISRO", "destination": "Moon", "launch_year": 2008,
+    "summary": "India's first lunar probe; its instruments detected water molecules on the Moon.",
+    "crew": [],
+    "software": [],
+    "companies": [{"name": "ISRO", "contribution": "Spacecraft and PSLV launch"}],
+    "timeline": [{"date": "2008-10-22", "event": "Launch"}, {"date": "2009-08-29", "event": "Contact lost"}],
+    "sources": ["https://en.wikipedia.org/wiki/Chandrayaan-1"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "mars-orbiter-mission", "name": "Mars Orbiter Mission (Mangalyaan)", "agency": "ISRO", "destination": "Mars", "launch_year": 2013,
+    "summary": "India's first interplanetary mission.",
+    "crew": [],
+    "software": [],
+    "companies": [{"name": "ISRO", "contribution": "Spacecraft and PSLV launch"}],
+    "timeline": [{"date": "2013-11-05", "event": "Launch"}, {"date": "2014-09-24", "event": "Entered Mars orbit"}],
+    "sources": ["https://en.wikipedia.org/wiki/Mars_Orbiter_Mission"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "chandrayaan-3", "name": "Chandrayaan-3", "agency": "ISRO", "destination": "Moon", "launch_year": 2023,
+    "summary": "Lander and rover; India's first soft landing on the Moon.",
+    "crew": [],
+    "software": [],
+    "companies": [{"name": "ISRO", "contribution": "Lander (Vikram), rover (Pragyan), LVM3 launch"}],
+    "timeline": [{"date": "2023-07-14", "event": "Launch on LVM3"}, {"date": "2023-08-23", "event": "Soft landing near the lunar south pole"}],
+    "sources": ["https://en.wikipedia.org/wiki/Chandrayaan-3"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "curiosity", "name": "Curiosity (Mars Science Laboratory)", "agency": "NASA", "destination": "Mars", "launch_year": 2011,
+    "summary": "Car-sized rover exploring Gale Crater.",
+    "crew": [],
+    "software": [{"name": "VxWorks", "purpose": "Real-time operating system on the rover computers"}],
+    "companies": [{"name": "Jet Propulsion Laboratory", "contribution": "Mission management"}],
+    "timeline": [{"date": "2011-11-26", "event": "Launch"}, {"date": "2012-08-06", "event": "Landed in Gale Crater"}],
+    "sources": ["https://en.wikipedia.org/wiki/Curiosity_(rover)"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "perseverance", "name": "Perseverance", "agency": "NASA", "destination": "Mars", "launch_year": 2020,
+    "summary": "Mars rover collecting samples; carried the Ingenuity helicopter.",
+    "crew": [],
+    "software": [{"name": "VxWorks", "purpose": "Real-time operating system on the rover computer"}],
+    "companies": [{"name": "Jet Propulsion Laboratory", "contribution": "Mission management"}],
+    "timeline": [{"date": "2020-07-30", "event": "Launch"}, {"date": "2021-02-18", "event": "Landed in Jezero Crater"}, {"date": "2021-04-19", "event": "Ingenuity's first flight"}],
+    "sources": ["https://en.wikipedia.org/wiki/Perseverance_(rover)"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "crew-dragon-demo-2", "name": "Crew Dragon Demo-2", "agency": "NASA / SpaceX", "destination": "Earth orbit (ISS)", "launch_year": 2020,
+    "summary": "First crewed orbital flight of a commercial spacecraft.",
+    "crew": [{"name": "Bob Behnken", "role": "Spacecraft Commander"}, {"name": "Doug Hurley", "role": "Pilot"}],
+    "software": [],
+    "companies": [{"name": "SpaceX", "contribution": "Dragon spacecraft and Falcon 9"}],
+    "timeline": [{"date": "2020-05-30", "event": "Launch"}, {"date": "2020-08-02", "event": "Splashdown"}],
+    "sources": ["https://en.wikipedia.org/wiki/Crew_Dragon_Demo-2"], "last_updated": "2026-11-26"
+  },
+  {
+    "id": "jwst", "name": "James Webb Space Telescope", "agency": "NASA / ESA / CSA", "destination": "Sun-Earth L2", "launch_year": 2021,
+    "summary": "Infrared space telescope.",
+    "crew": [],
+    "software": [],
+    "companies": [{"name": "Northrop Grumman", "contribution": "Prime contractor"}, {"name": "Arianespace", "contribution": "Ariane 5 launch"}],
+    "timeline": [{"date": "2021-12-25", "event": "Launch"}, {"date": "2022-01-24", "event": "Arrived at L2"}, {"date": "2022-07-12", "event": "First full-color images released"}],
+    "sources": ["https://en.wikipedia.org/wiki/James_Webb_Space_Telescope"], "last_updated": "2026-11-26"
+  }
+]
