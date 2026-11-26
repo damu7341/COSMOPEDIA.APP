@@ -3,324 +3,1007 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cosmopedia — Universal Spacecraft Encyclopedia</title>
+  <title>COSMOPEDIA — Orbital & Deep-Space Encyclopedia</title>
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#050814" />
+  <meta name="theme-color" content="#040711" />
   <style>
+    :root {
+      --bg-deep: #040711;
+      --bg-card: rgba(13, 19, 33, 0.86);
+      --bg-panel: rgba(17, 25, 42, 0.95);
+      --border: rgba(99, 132, 189, 0.24);
+      --border-active: #58a6ff;
+      --text-main: #edf2f7;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-purple: #a78bfa;
+      --gold: #fbbf24;
+    }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: radial-gradient(ellipse at bottom, #1b2735 0%, #050814 100%);
-      color: #e6edf3;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(circle at 50% 0%, #111d38 0%, #060b19 55%, #02040a 100%);
+      color: var(--text-main);
       min-height: 100vh;
       overflow-x: hidden;
+      line-height: 1.65;
     }
-    .stars {
+    /* Multi-layered Parallax Starfield */
+    .stars-sm, .stars-lg {
       position: fixed;
       inset: 0;
-      z-index: 0;
       pointer-events: none;
+      z-index: 0;
+    }
+    .stars-sm {
       background-image:
-        radial-gradient(1.5px 1.5px at 20px 30px, #ffffff, transparent),
-        radial-gradient(1px 1px at 90px 140px, #a5d6ff, transparent),
-        radial-gradient(2px 2px at 180px 80px, #ffffff, transparent),
-        radial-gradient(1px 1px at 260px 210px, #d2a8ff, transparent),
-        radial-gradient(1.5px 1.5px at 320px 40px, #ffffff, transparent);
-      background-size: 350px 260px;
-      animation: drift 60s linear infinite;
-      opacity: 0.75;
+        radial-gradient(1px 1px at 25px 40px, rgba(255,255,255,0.85), transparent),
+        radial-gradient(1px 1px at 110px 160px, rgba(147,197,253,0.7), transparent),
+        radial-gradient(1px 1px at 210px 90px, rgba(255,255,255,0.75), transparent),
+        radial-gradient(1px 1px at 290px 230px, rgba(196,181,253,0.65), transparent);
+      background-size: 320px 280px;
+      animation: driftSlow 90s linear infinite;
     }
-    @keyframes drift {
+    .stars-lg {
+      background-image:
+        radial-gradient(2px 2px at 60px 100px, #ffffff, transparent),
+        radial-gradient(1.8px 1.8px at 240px 50px, #bae6fd, transparent),
+        radial-gradient(2.2px 2.2px at 170px 260px, #ddd6fe, transparent);
+      background-size: 420px 360px;
+      animation: driftFast 55s linear infinite;
+    }
+    @keyframes driftSlow {
       from { transform: translateY(0); }
-      to { transform: translateY(-260px); }
+      to { transform: translateY(-280px); }
     }
-    .container {
-      position: relative;
-      z-index: 1;
-      max-width: 960px;
+    @keyframes driftFast {
+      from { transform: translateY(0); }
+      to { transform: translateY(-360px); }
+    }
+
+    /* Top Navigation Bar */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(4, 7, 17, 0.82);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+    }
+    .nav-inner {
+      max-width: 1120px;
       margin: 0 auto;
-      padding: 20px 16px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    header {
-      text-align: center;
-      padding: 24px 0 20px;
-      border-bottom: 1px solid rgba(139, 148, 158, 0.25);
-      margin-bottom: 20px;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
     }
-    header h1 {
-      font-size: 2rem;
-      letter-spacing: 2px;
-      background: linear-gradient(90deg, #58a6ff, #bc8cff);
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 1rem;
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.35);
+    }
+    .brand-text h1 {
+      font-size: 1.15rem;
+      letter-spacing: 2.5px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #f8fafc, #7dd3fc);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    header p { color: #8b949e; font-size: 0.92rem; margin-top: 6px; }
-    .controls {
+    .brand-text span {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+    .nav-stats {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .pill-stat {
+      font-size: 0.78rem;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(30, 41, 59, 0.75);
+      border: 1px solid var(--border);
+      color: #cbd5e1;
+      cursor: pointer;
+    }
+    .pill-stat.active {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 26px 18px 80px;
+    }
+
+    /* Hero Search & Filter Console */
+    .hero {
+      background: linear-gradient(145deg, rgba(15, 23, 42, 0.9), rgba(9, 14, 28, 0.92));
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+    .hero h2 {
+      font-size: 1.45rem;
+      margin-bottom: 6px;
+      color: #f1f5f9;
+    }
+    .hero p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 18px;
+    }
+    .search-bar {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
     input, select, button {
-      background: rgba(22, 27, 34, 0.9);
-      border: 1px solid #30363d;
-      color: #e6edf3;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 0.95rem;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 11px 14px;
+      border-radius: 10px;
+      font-size: 0.93rem;
+      outline: none;
     }
-    input { flex: 1; min-width: 220px; }
+    input:focus, select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+    input { flex: 1; min-width: 240px; }
     button {
-      background: #238636;
-      border-color: #2ea043;
-      cursor: pointer;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      border: 1px solid #3b82f6;
       font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
     }
-    button.secondary { background: #1f6feb; border-color: #388bfd; }
+    button:hover { opacity: 0.92; transform: translateY(-1px); }
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      font-size: 0.8rem;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(30, 41, 59, 0.65);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip.active, .chip:hover {
+      background: rgba(56, 189, 248, 0.16);
+      border-color: var(--accent);
+      color: #e0f2fe;
+    }
+
+    /* Spacecraft Cards Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
     }
     .card {
-      background: rgba(13, 17, 23, 0.85);
-      border: 1px solid #30363d;
-      border-radius: 12px;
-      padding: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       cursor: pointer;
-      transition: transform 0.15s, border-color 0.15s;
+      transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
     }
-    .card:hover { transform: translateY(-3px); border-color: #58a6ff; }
-    .badge {
-      display: inline-block;
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-active);
+      box-shadow: 0 12px 28px rgba(2, 8, 23, 0.65);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+    .agency-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.14);
+      color: #7dd3fc;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+    }
+    .status-dot {
       font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(56, 139, 253, 0.15);
-      color: #58a6ff;
-      margin-bottom: 8px;
+      color: #94a3b8;
     }
-    .card h3 { font-size: 1.15rem; margin-bottom: 6px; }
-    .card p { font-size: 0.88rem; color: #8b949e; line-height: 1.4; }
-    .article {
+    .card h3 {
+      font-size: 1.2rem;
+      color: #f8fafc;
+      margin-bottom: 6px;
+    }
+    .card-meta {
+      font-size: 0.8rem;
+      color: #7dd3fc;
+      margin-bottom: 10px;
+    }
+    .card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      font-size: 0.78rem;
+      color: #cbd5e1;
+    }
+
+    /* Wikipedia-Style Technical Article View */
+    .article-shell {
       display: none;
-      background: rgba(13, 17, 23, 0.94);
-      border: 1px solid #30363d;
-      border-radius: 12px;
-      padding: 22px;
-      line-height: 1.65;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 26px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     }
-    .article.active { display: block; }
-    .infobox {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 8px;
-      padding: 14px;
-      margin: 14px 0 20px;
+    .article-shell.active { display: block; }
+    .article-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 18px;
     }
-    .infobox table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .infobox th { text-align: left; color: #8b949e; padding: 6px 8px; width: 38%; border-bottom: 1px solid #21262d; }
-    .infobox td { padding: 6px 8px; border-bottom: 1px solid #21262d; }
-    .article h2 {
+    .btn-ghost {
+      background: rgba(30, 41, 59, 0.85);
+      border-color: var(--border);
+    }
+    .article-header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+    .article-header h1 {
+      font-size: 1.85rem;
+      color: #f8fafc;
+      margin-bottom: 4px;
+    }
+    .article-subtitle {
+      color: var(--accent);
+      font-size: 0.92rem;
+    }
+    .article-layout {
+      display: grid;
+      grid-template-columns: 1fr 330px;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 820px) {
+      .article-layout { grid-template-columns: 1fr; }
+      .infobox { order: -1; }
+    }
+    .toc {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .toc-title {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .toc ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 6px;
+      font-size: 0.86rem;
+    }
+    .toc a { color: #7dd3fc; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+
+    .article-body h2 {
       font-size: 1.25rem;
-      border-bottom: 1px solid #30363d;
+      color: #e0f2fe;
+      border-bottom: 1px solid var(--border);
       padding-bottom: 6px;
-      margin: 20px 0 10px;
-      color: #79c0ff;
+      margin: 24px 0 12px;
     }
-    .back-btn { margin-bottom: 14px; background: #30363d; border-color: #484f58; }
+    .article-body p {
+      margin-bottom: 14px;
+      color: #dbeafe;
+      font-size: 0.96rem;
+    }
+    .timeline-list {
+      border-left: 2px solid var(--accent);
+      padding-left: 16px;
+      margin: 12px 0 18px;
+    }
+    .timeline-item {
+      margin-bottom: 12px;
+      font-size: 0.92rem;
+    }
+    .timeline-item strong { color: #7dd3fc; }
+
+    /* Wikipedia Right-Hand Infobox */
+    .infobox {
+      background: rgba(10, 15, 28, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .infobox-banner {
+      background: linear-gradient(135deg, #1e3a8a, #312e81);
+      padding: 12px 14px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+    .infobox table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    .infobox th {
+      text-align: left;
+      color: var(--text-muted);
+      padding: 9px 12px;
+      width: 38%;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      vertical-align: top;
+    }
+    .infobox td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+      color: #f1f5f9;
+    }
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
   </style>
 </head>
 <body>
-  <div class="stars"></div>
-  <div class="container">
-    <header>
-      <h1>COSMOPEDIA</h1>
-      <p>The Free Encyclopedia of Human & Robotic Spacecraft</p>
-    </header>
+  <div class="stars-sm"></div>
+  <div class="stars-lg"></div>
 
-    <div id="listView">
-      <div class="controls">
-        <input type="text" id="searchInput" placeholder="Search any spacecraft (e.g., Apollo 11, Sputnik, Chandrayaan)..." />
-        <select id="agencyFilter">
-          <option value="ALL">All Agencies</option>
-          <option value="NASA">NASA</option>
-          <option value="ISRO">ISRO</option>
-          <option value="Soviet Space Program">Soviet / Roscosmos</option>
-          <option value="ESA">ESA</option>
-          <option value="SpaceX">SpaceX</option>
-        </select>
-        <button class="secondary" onclick="searchWikipedia()">Search Global Archive</button>
+  <nav>
+    <div class="nav-inner">
+      <div class="brand" onclick="closeArticle()">
+        <div class="brand-icon">C</div>
+        <div class="brand-text">
+          <h1>COSMOPEDIA</h1>
+          <span>Aerospace & Spacecraft Archive</span>
+        </div>
       </div>
+      <div class="nav-stats">
+        <span class="pill-stat" id="countBadge">12 Featured Missions</span>
+        <span class="pill-stat" id="favFilterBtn" onclick="toggleFavoritesView()">★ Saved (<span id="favCount">0</span>)</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div id="directoryView">
+      <div class="hero">
+        <h2>Universal Spacecraft & Flight Systems Encyclopedia</h2>
+        <p>Explore mission histories, flight computers, onboard software architectures, launch vehicles, and crews across human spaceflight history—or query the global orbital archive for any mission ever launched.</p>
+        <div class="search-bar">
+          <input type="text" id="searchInput" placeholder="Search spacecraft, crew, software (e.g., Apollo, AGC, Chandrayaan, RTOS, Voyager)..." />
+          <select id="agencyFilter">
+            <option value="ALL">All Space Agencies</option>
+            <option value="NASA">NASA (United States)</option>
+            <option value="ISRO">ISRO (India)</option>
+            <option value="Soviet">Soviet / Roscosmos</option>
+            <option value="ESA">ESA (Europe)</option>
+            <option value="SpaceX">SpaceX</option>
+            <option value="CNSA">CNSA (China)</option>
+            <option value="JAXA">JAXA (Japan)</option>
+          </select>
+          <button onclick="searchGlobalArchive()">Search Global Archive</button>
+        </div>
+        <div class="chips" id="categoryChips">
+          <span class="chip active" data-cat="ALL">All Categories</span>
+          <span class="chip" data-cat="Crewed">Crewed Spaceflight</span>
+          <span class="chip" data-cat="Lunar">Lunar Exploration</span>
+          <span class="chip" data-cat="Deep Space">Interplanetary & Deep Space</span>
+          <span class="chip" data-cat="Observatory">Space Telescopes</span>
+          <span class="chip" data-cat="Station">Space Stations</span>
+        </div>
+      </div>
+
       <div id="cardsGrid" class="grid"></div>
     </div>
 
-    <div id="articleView" class="article">
-      <button class="back-btn" onclick="closeArticle()">← Back to Spacecraft Directory</button>
-      <div id="articleContent"></div>
+    <div id="articleView" class="article-shell">
+      <div class="article-actions">
+        <button class="btn-ghost" onclick="closeArticle()">← Back to Directory</button>
+        <button class="btn-ghost" id="bookmarkBtn" onclick="toggleBookmarkCurrent()">☆ Save Mission</button>
+      </div>
+      <div id="articleContainer"></div>
     </div>
+
+    <footer>
+      COSMOPEDIA • Compiled from public aerospace archives (NASA, ISRO, ESA, JAXA, CNSA & Wikimedia).
+    </footer>
   </div>
 
   <script>
     const SPACECRAFT_DB = [
       {
+        id: "sputnik-1",
         name: "Sputnik 1",
+        subtitle: "First Artificial Earth Satellite",
         agency: "Soviet Space Program",
+        category: "Deep Space",
+        status: "Completed (Deorbited Jan 1958)",
         launchDate: "4 October 1957",
-        crew: "Uncrewed (First artificial Earth satellite)",
-        software: "Analog electromechanical timer & thermal relay logic (pre-digital onboard computer)",
-        destination: "Low Earth Orbit",
-        overview: "Sputnik 1 was the first artificial Earth satellite, launched into an elliptical low Earth orbit by the Soviet Union as part of the International Geophysical Year. Its radio pulses were detectable around the world and inaugurated the Space Age.",
-        history: "Designed by Sergei Korolev and Mikhail Tikhonravov, Sputnik 1 was a 58 cm polished metal sphere with four external radio antennas broadcasting on 20.005 and 40.002 MHz for 21 days until its transmitter batteries depleted.",
-        avionics: "Rather than modern stored-program software, Sputnik 1 relied on hardwired relay switching sequences, pressure-sensitive switches, and fan-driven thermal regulation loops inside its pressurized nitrogen interior."
+        launchVehicle: "Sputnik 8K71PS (R-7 Semyorka)",
+        launchSite: "Baikonur Cosmodrome, Site 1/5",
+        mass: "83.6 kg",
+        orbit: "Low Earth Orbit (215 × 939 km)",
+        crew: "Uncrewed",
+        software: "Electromechanical relay sequencer, pressure-switch telemetry & thermal fan control loop",
+        overview: "Sputnik 1 was the first artificial satellite placed into Earth orbit, inaugurating the Space Age. Developed by OKB-1 under Chief Designer Sergei Korolev, the 58-centimeter pressurized aluminum-magnesium sphere transmitted pulsed radio signals on 20.005 and 40.002 MHz that were monitored by amateur radio operators and tracking stations worldwide.",
+        missionHistory: "Launched during the International Geophysical Year, Sputnik 1 completed 1,440 orbits of Earth over 92 days before decaying into the atmosphere on 4 January 1958. By measuring Doppler shifts in its radio signal and tracking atmospheric drag on its orbit, scientists deduced the density of Earth's upper atmosphere and electron distribution in the ionosphere.",
+        softwareArchitecture: "Predating digital stored-program flight computers, Sputnik 1 utilized hardwired electromechanical relay timers and bimetallic thermal switches. Internal nitrogen gas pressure (1.3 atm) and temperature changes altered the pulse duration and repetition rate of its 1-watt vacuum-tube transmitter, encoding basic spacecraft health directly into the audio beep timing.",
+        timeline: [
+          { date: "4 Oct 1957", event: "Liftoff from Baikonur Site 1/5 and orbital insertion." },
+          { date: "26 Oct 1957", event: "Onboard silver-zinc batteries deplete after 21 days of continuous radio telemetry." },
+          { date: "4 Jan 1958", event: "Atmospheric reentry after 70 million km traveled." }
+        ]
       },
       {
+        id: "vostok-1",
+        name: "Vostok 1",
+        subtitle: "First Human Spaceflight in History",
+        agency: "Soviet Space Program",
+        category: "Crewed",
+        status: "Completed (12 April 1961)",
+        launchDate: "12 April 1961",
+        launchVehicle: "Vostok-K (8K72K)",
+        launchSite: "Baikonur Cosmodrome, Site 1",
+        mass: "4,725 kg",
+        orbit: "Low Earth Orbit (169 × 327 km)",
+        crew: "Yuri Gagarin (Pilot)",
+        software: "Automated electromechanical sequencer, optical Vzor horizon orientation & coded manual override lock",
+        overview: "Vostok 1 was the first crewed spaceflight in human history, carrying Soviet cosmonaut Yuri Gagarin on a single 108-minute orbit around Earth. The spacecraft consisted of a spherical descent module (2.3 m diameter) covered in ablative heat shielding and a biconical instrument module housing Attitude Control thrusters and the TDU-1 retrorocket.",
+        missionHistory: "Because flight surgeons were uncertain how weightlessness would affect human motor coordination, Vostok 1 was controlled almost entirely automatically from ground radio commands and onboard sequencers. After retrofire over Angola, the instrument module failed to cleanly separate for 10 minutes until aerodynamic heating burned through the connecting cables, allowing the spherical capsule to stabilize and Gagarin to eject safely at 7 km altitude.",
+        softwareArchitecture: "Flight control relied on a stepped electromechanical program timer (Granit/Zarya telemetry links), infrared vertical horizon sensors, and a solar orientation sensor. Manual attitude control was locked behind a numeric keypad; a sealed envelope inside the cabin contained the 3-digit unlock code ('125') in case automated systems failed.",
+        timeline: [
+          { date: "06:07 UTC", event: "Launch from Baikonur Cosmodrome." },
+          { date: "07:25 UTC", event: "TDU-1 retrorocket fires for 42 seconds to initiate reentry." },
+          { date: "07:55 UTC", event: "Safe parachute landing near Engels, Saratov Oblast." }
+        ]
+      },
+      {
+        id: "apollo-11",
         name: "Apollo 11",
+        subtitle: "First Crewed Lunar Landing Mission",
         agency: "NASA",
+        category: "Lunar",
+        status: "Completed (24 July 1969)",
         launchDate: "16 July 1969",
-        crew: "Neil Armstrong (Commander), Buzz Aldrin (Lunar Module Pilot), Michael Collins (Command Module Pilot)",
-        software: "Apollo Guidance Computer (AGC) — Luminary (LM) & Comanche (CSM) written in AGC Assembly",
-        destination: "Moon (Sea of Tranquility)",
-        overview: "Apollo 11 was the American spaceflight that first landed humans on the Moon. Commander Neil Armstrong and Lunar Module Pilot Buzz Aldrin landed the Apollo Lunar Module Eagle on July 20, 1969.",
-        history: "Launched by a Saturn V rocket from Kennedy Space Center, Apollo 11 entered lunar orbit after three days. Armstrong and Aldrin spent 21 hours, 36 minutes on the lunar surface and collected 21.5 kg of lunar material.",
-        avionics: "Powered by the Apollo Guidance Computer (AGC) with software led by Margaret Hamilton at MIT Instrumentation Laboratory. Its priority-scheduled executive system famously recovered from 1202 and 1201 program alarms during lunar descent by shedding low-priority radar tasks."
+        launchVehicle: "Saturn V (SA-506)",
+        launchSite: "Kennedy Space Center, LC-39A",
+        mass: "43,901 kg (CSM + LM combined)",
+        orbit: "Selenocentric / Lunar Surface (Sea of Tranquility)",
+        crew: "Neil Armstrong (CDR), Buzz Aldrin (LMP), Michael Collins (CMP)",
+        software: "Apollo Guidance Computer (AGC Block II) — Luminary 1A (LM) & Comanche 55 (CSM) in AGC Assembly",
+        overview: "Apollo 11 achieved the primary objective of Project Apollo by landing the first humans on the Moon on 20 July 1969. The mission deployed two major spacecraft: Command and Service Module Columbia (CSM-107) and Lunar Module Eagle (LM-5), returning 21.55 kg of lunar basalt and regolith samples to Earth.",
+        missionHistory: "After translunar injection and lunar orbit insertion, Armstrong and Aldrin undocked Eagle and began powered descent. Guiding the craft manually past a boulder-strewn crater with under 30 seconds of hover fuel remaining, Armstrong landed at Tranquility Base. The crew performed a 2-hour 31-minute moonwalk, deploying the Early Apollo Scientific Experiments Package (EASEP).",
+        softwareArchitecture: "Designed at the MIT Instrumentation Laboratory with flight software engineering led by Margaret Hamilton, the AGC operated with 2,048 words of erasable magnetic-core RAM and 36,864 words of woven core-rope ROM. Its asynchronous priority-driven Executive scheduler famously saved the landing when the rendezvous radar flooded the CPU with interrupts (1202 and 1201 alarms), automatically dropping low-priority display tasks while preserving primary guidance loops.",
+        timeline: [
+          { date: "16 Jul 1969", event: "Saturn V launches from LC-39A." },
+          { date: "20 Jul 1969", event: "Lunar Module Eagle lands at Mare Tranquillitatis (20:17 UTC)." },
+          { date: "24 Jul 1969", event: "Command Module Columbia splashes down in the North Pacific Ocean." }
+        ]
       },
       {
+        id: "voyager-1",
         name: "Voyager 1",
+        subtitle: "Interstellar Space Probe & Grand Tour Explorer",
         agency: "NASA",
+        category: "Deep Space",
+        status: "Active (Interstellar Space — 24+ Billion km)",
         launchDate: "5 September 1977",
-        crew: "Uncrewed Interstellar Probe",
-        software: "Custom Assembly on CCS (Computer Command Subsystem), FDS (Flight Data Subsystem), and AACS",
-        destination: "Jupiter, Saturn & Interstellar Space",
-        overview: "Voyager 1 is a space probe launched by NASA to study the outer Solar System and interstellar space beyond the Sun's heliosphere. It is the most distant human-made object from Earth.",
-        history: "After completing flybys of Jupiter (1979) and Saturn (1980), Voyager 1 crossed the heliopause on 25 August 2012, becoming the first spacecraft to enter interstellar space.",
-        avionics: "Runs on three redundant dual-processor computer systems with roughly 69.63 KB of total memory combined. Engineers continue to patch its Assembly code remotely from Earth across a 22+ hour one-way light-time delay."
+        launchVehicle: "Titan IIIE / Centaur",
+        launchSite: "Cape Canaveral, LC-41",
+        mass: "825.5 kg",
+        orbit: "Heliocentric Hyperbolic Escape Trajectory",
+        crew: "Uncrewed (Carries Voyager Golden Record)",
+        software: "Custom Assembly across dual-redundant CCS, FDS, and AACS flight computers (~69.63 KB total memory)",
+        overview: "Voyager 1 is a deep-space probe built by NASA's Jet Propulsion Laboratory (JPL) to explore the outer planets and the interstellar medium beyond the Sun's heliosphere. It is the most distant human-made object from Earth and the first spacecraft to enter interstellar space.",
+        missionHistory: "Voyager 1 completed historic flybys of Jupiter in March 1979 (discovering active volcanism on Io) and Saturn in November 1980 (revealing Titan's dense nitrogen atmosphere). On 14 February 1990, it captured the 'Pale Blue Dot' portrait of Earth from 6 billion km away before crossing the heliopause on 25 August 2012.",
+        softwareArchitecture: "Controlled by three paired, fault-tolerant computer systems: the Computer Command Subsystem (CCS), Flight Data Subsystem (FDS), and Attitude and Articulation Control Subsystem (AACS). Total onboard memory across all six processors is roughly 69.63 kilobytes, stored on plated-wire and CMOS memory. In 2024, JPL engineers successfully uploaded patched Assembly code across a 22.5-hour one-way radio delay to work around a degraded FDS memory chip.",
+        timeline: [
+          { date: "5 Sep 1977", event: "Launched from Cape Canaveral aboard Titan IIIE." },
+          { date: "5 Mar 1979", event: "Closest approach to Jupiter (349,000 km)." },
+          { date: "25 Aug 2012", event: "Crosses the heliopause into interstellar space." }
+        ]
       },
       {
-        name: "Chandrayaan-3",
-        agency: "ISRO",
-        launchDate: "14 July 2023",
-        crew: "Uncrewed (Vikram Lander & Pragyan Rover)",
-        software: "Real-Time Operating System (RTOS) with Autonomous Hazard Detection & Avoidance (HDA) C/C++ flight code",
-        destination: "Moon (South Polar Region — Statio Shiv Shakti)",
-        overview: "Chandrayaan-3 is the third lunar exploration mission by the Indian Space Research Organisation (ISRO). On 23 August 2023, India became the fourth nation to soft-land on the Moon and the first near the lunar south pole.",
-        history: "Launched aboard an LVM3-M4 rocket from Satish Dhawan Space Centre, the propulsion module carried the Vikram lander and Pragyan rover to a 100 km circular lunar orbit before powered descent.",
-        avionics: "Uses closed-loop autonomous guidance, Laser Doppler Velocimeter (LDV), and camera-based Hazard Detection and Avoidance software designed to survive sensor failures and select safe landing terrain without real-time ground intervention."
+        id: "hubble",
+        name: "Hubble Space Telescope",
+        subtitle: "Low-Earth-Orbit Optical & Ultraviolet Observatory",
+        agency: "NASA / ESA",
+        category: "Observatory",
+        status: "Active (35+ Years in Orbit)",
+        launchDate: "24 April 1990",
+        launchVehicle: "Space Shuttle Discovery (STS-31)",
+        launchSite: "Kennedy Space Center, LC-39B",
+        mass: "11,110 kg",
+        orbit: "Low Earth Orbit (535 km, 28.5° inclination)",
+        crew: "Uncrewed (Serviced by 5 Space Shuttle crews)",
+        software: "NASA Standard Spacecraft Computer (NSSC-1) in JOVIAL + Intel 80486 coprocessor running C/Assembly",
+        overview: "The Hubble Space Telescope (HST) is a 2.4-meter Ritchey–Chrétien space observatory operating outside Earth's distorting atmosphere across ultraviolet, visible, and near-infrared wavelengths. Its observations refined the Hubble constant, confirmed supermassive black holes at galactic centers, and captured the Hubble Deep Field.",
+        missionHistory: "Deployed by Space Shuttle Discovery in 1990, Hubble initially suffered from spherical aberration in its primary mirror. Astronauts installed the COSTAR corrective optics package during Servicing Mission 1 (STS-61) in December 1993, followed by four additional servicing missions through 2009 that upgraded gyros, batteries, solar arrays, and science instruments.",
+        softwareArchitecture: "Hubble's main flight computer (DF-224, later upgraded to an Intel 486-based Advanced Computer during SM3A) runs custom real-time executive software written in JOVIAL and C, communicating with the NSSC-1 payload computer to maintain pointing stability within 0.007 arcseconds using reaction wheels and fine guidance sensors.",
+        timeline: [
+          { date: "24 Apr 1990", event: "Deployed by Space Shuttle Discovery (STS-31)." },
+          { date: "Dec 1993", event: "Servicing Mission 1 installs COSTAR corrective optics." },
+          { date: "May 2009", event: "Servicing Mission 4 installs Wide Field Camera 3 (WFC3)." }
+        ]
       },
       {
-        name: "Crew Dragon Endeavour (Demo-2)",
-        agency: "SpaceX",
-        launchDate: "30 May 2020",
-        crew: "Doug Hurley, Bob Behnken",
-        software: "Flight-critical C++ on Linux (x86 triple-redundant processors) + Chromium/JavaScript touchscreen UI",
-        destination: "International Space Station (Low Earth Orbit)",
-        overview: "Crew Dragon Demo-2 was the first crewed test flight of the SpaceX Crew Dragon spacecraft, restoring human orbital spaceflight capability from the United States.",
-        history: "Launched atop a Falcon 9 rocket from LC-39A, Endeavour autonomously docked with the International Space Station 19 hours later and returned safely via splashdown on 2 August 2020.",
-        avionics: "Operates on three dual-core x86 processors running a hardened Linux kernel with custom C++ flight software using an actor-model architecture, paired with touchscreen displays built using Chromium and JavaScript."
+        id: "iss",
+        name: "International Space Station (ISS)",
+        subtitle: "Multinational Modular Orbital Laboratory",
+        agency: "NASA / Roscosmos / ESA / JAXA / CSA",
+        category: "Station",
+        status: "Active (Continuously Crewed since Nov 2000)",
+        launchDate: "20 November 1998 (Zarya module)",
+        launchVehicle: "Proton-K, Space Shuttle, Soyuz, Falcon 9",
+        launchSite: "Baikonur & Kennedy Space Center",
+        mass: "450,000+ kg",
+        orbit: "Low Earth Orbit (~408 km, 51.6° inclination)",
+        crew: "Expedition Crews (typically 7 astronauts/cosmonauts)",
+        software: "Command & Data Handling (C&DH) in Ada 95 on MIL-STD-1553B buses + Debian Linux crew laptops",
+        overview: "The International Space Station is the largest modular space station in low Earth orbit, spanning 109 meters across its integrated truss structure. Built and operated jointly by five partner space agencies, it serves as a microgravity research laboratory for astrobiology, materials science, human physiology, and Earth observation.",
+        missionHistory: "Assembly began with the Russian Zarya control module in November 1998, followed two weeks later by the U.S. Unity node aboard STS-88. Continuous human habitation began on 2 November 2000 with Expedition 1, welcoming over 270 astronauts from more than 20 countries.",
+        softwareArchitecture: "The U.S. Orbital Segment uses a three-tier distributed hierarchy of Multiplexer/Demultiplexer (MDM) computers running radiation-hardened Intel 386SX processors programmed in Ada 95 over MIL-STD-1553B data buses. Crew operational laptops (PCS) migrated from Windows to Debian Linux for deterministic stability, while the Russian segment runs triple-redundant Argon-16 / TVM flight computers.",
+        timeline: [
+          { date: "20 Nov 1998", event: "First module (Zarya) launches from Baikonur." },
+          { date: "2 Nov 2000", event: "Expedition 1 begins uninterrupted human presence in orbit." },
+          { date: "30 May 2020", event: "First commercial crew vehicle (SpaceX Crew Dragon) docks." }
+        ]
       },
       {
-        name: "Rosetta",
+        id: "curiosity",
+        name: "Curiosity (Mars Science Laboratory)",
+        subtitle: "Nuclear-Powered Martian Astrobiology Rover",
+        agency: "NASA",
+        category: "Deep Space",
+        status: "Active (Gale Crater, Mars)",
+        launchDate: "26 November 2011",
+        launchVehicle: "Atlas V 541",
+        launchSite: "Cape Canaveral, SLC-41",
+        mass: "899 kg",
+        orbit: "Martian Surface (Aeolis Palus / Mount Sharp)",
+        crew: "Uncrewed Autonomous Rover",
+        software: "VxWorks RTOS on RAD750 processor (~2.5 million lines of ANSI C flight code)",
+        overview: "Curiosity is a car-sized rover exploring Gale Crater on Mars to investigate past habitability, climate history, and geology. Powered by a Multi-Mission Radioisotope Thermoelectric Generator (MMRTG), it carries 10 science instruments including ChemCam, Sample Analysis at Mars (SAM), and Mastcam.",
+        missionHistory: "Curiosity pioneered the 'Sky Crane' entry, descent, and landing architecture on 6 August 2012, lowering the rover on nylon tethers onto Aeolis Palus. Within its first year, Curiosity confirmed that ancient Gale Crater held freshwater lakes and chemical building blocks capable of supporting microbial life.",
+        softwareArchitecture: "Powered by dual-redundant BAE RAD750 radiation-hardened PowerPC processors (200 MHz, 256 MB DRAM, 2 GB flash) running Wind River's VxWorks real-time operating system. Its ~2.5 million lines of C flight code manage autonomous stereo-vision hazard avoidance, drill sample processing, and the high-precision Entry, Descent, and Landing (EDL) state machine.",
+        timeline: [
+          { date: "26 Nov 2011", event: "Launched atop Atlas V 541." },
+          { date: "6 Aug 2012", event: "Successful Sky Crane touchdown inside Gale Crater." },
+          { date: "Sep 2014", event: "Reaches base of Mount Sharp (Aeolis Mons)." }
+        ]
+      },
+      {
+        id: "rosetta",
+        name: "Rosetta & Philae",
+        subtitle: "First Comet Orbiter & Soft Lander",
         agency: "ESA",
+        category: "Deep Space",
+        status: "Completed (30 September 2016)",
         launchDate: "2 March 2004",
+        launchVehicle: "Ariane 5G+",
+        launchSite: "Guiana Space Centre, ELA-3",
+        mass: "3,000 kg (including 100 kg Philae lander)",
+        orbit: "Comet 67P/Churyumov–Gerasimenko",
         crew: "Uncrewed (Orbiter + Philae Lander)",
         software: "Ada & C flight software on MIL-STD-1750A processors with RTEMS real-time kernel",
-        destination: "Comet 67P/Churyumov–Gerasimenko",
-        overview: "Rosetta was a space probe built by the European Space Agency that performed the first detailed study of a comet from orbit and deployed the Philae lander onto its surface.",
-        history: "Following a 10-year journey using Earth and Mars gravity assists, Rosetta rendezvoused with Comet 67P in August 2014 and deployed Philae on 12 November 2014.",
-        avionics: "Built using high-reliability Ada and C real-time software capable of autonomous deep-space hibernation and wake-up sequences after 31 months in cold deep space."
+        overview: "Rosetta was a European Space Agency cornerstone mission that rendezvoused with Comet 67P/Churyumov–Gerasimenko, escorted it around the Sun, and deployed the Philae lander onto its nucleus—the first controlled touchdown on a comet.",
+        missionHistory: "Over a 10-year trajectory requiring three Earth gravity assists and one Mars flyby, Rosetta entered deep-space hibernation for 31 months before waking up on 20 January 2014. On 12 November 2014, Philae touched down on Comet 67P's Agilkia site, discovering organic molecules and revealing the comet's rubber-duck bilobed geometry.",
+        softwareArchitecture: "Built with deterministic Ada and C real-time flight software running on radiation-tolerant Dynex MAS31750 (MIL-STD-1750A) processors. The software executed autonomous star-tracker navigation around an irregular, low-gravity comet nucleus and managed automated hibernation wake-up timers.",
+        timeline: [
+          { date: "2 Mar 2004", event: "Launched from Kourou aboard Ariane 5G+." },
+          { date: "6 Aug 2014", event: "Enters orbit around Comet 67P." },
+          { date: "12 Nov 2014", event: "Philae completes first soft landing on a comet." }
+        ]
+      },
+      {
+        id: "crew-dragon",
+        name: "Crew Dragon Endeavour",
+        subtitle: "Reusable Commercial Orbital Crew Spacecraft",
+        agency: "SpaceX",
+        category: "Crewed",
+        status: "Active (Multiple ISS Expeditions)",
+        launchDate: "30 May 2020 (Demo-2)",
+        launchVehicle: "Falcon 9 Block 5",
+        launchSite: "Kennedy Space Center, LC-39A",
+        mass: "12,519 kg",
+        orbit: "Low Earth Orbit (ISS Docking)",
+        crew: "Demo-2: Doug Hurley, Bob Behnken (supports up to 4 crew)",
+        software: "Triple-redundant x86 Linux with actor-based C++ flight code + Chromium/JavaScript touchscreen UI",
+        overview: "SpaceX Crew Dragon is a reusable orbital spacecraft capable of transporting astronauts to and from the International Space Station and free-flying orbital missions. Capsule C206 (Endeavour) flew the historic Demo-2 test flight in 2020, restoring American orbital human launch capability.",
+        missionHistory: "Equipped with eight SuperDraco launch-escape engines integrated into its hull and automated LIDAR/optical docking sensors, Crew Dragon autonomously rendezvoused with the ISS Harmony module during Demo-2 and later flew Crew-2, Axiom-1, Crew-6, and Crew-8.",
+        softwareArchitecture: "Unlike traditional aerospace processors, Crew Dragon uses three dual-core x86 processors running a hardened Linux kernel. Every flight-critical C++ computation runs in parallel across all six cores using an actor-model architecture with voting comparison, while astronauts interact with three touchscreen displays powered by Chromium and JavaScript.",
+        timeline: [
+          { date: "30 May 2020", event: "Demo-2 lifts off from LC-39A." },
+          { date: "31 May 2020", event: "Autonomous docking with the ISS." },
+          { date: "2 Aug 2020", event: "Splashdown in the Gulf of Mexico." }
+        ]
+      },
+      {
+        id: "jwst",
+        name: "James Webb Space Telescope",
+        subtitle: "Segmented Infrared Deep-Universe Observatory",
+        agency: "NASA / ESA / CSA",
+        category: "Observatory",
+        status: "Active (Sun–Earth L2 Halo Orbit)",
+        launchDate: "25 December 2021",
+        launchVehicle: "Ariane 5 ECA+",
+        launchSite: "Guiana Space Centre, ELA-3",
+        mass: "6,161.4 kg",
+        orbit: "Sun–Earth L2 Halo Orbit (1.5 million km from Earth)",
+        crew: "Uncrewed",
+        software: "VxWorks RTOS on RAD750 flight computer + JavaScript-driven onboard science script engine",
+        overview: "The James Webb Space Telescope (JWST) is the largest optical/infrared telescope in space, featuring a 6.5-meter gold-coated beryllium primary mirror composed of 18 hexagonal segments and a five-layer Kapton sunshield the size of a tennis court.",
+        missionHistory: "After launching on Christmas Day 2021, JWST completed 344 single-point-of-failure deployments—unfolding its sunshield and aligning its 18 mirror segments to nanometer precision—before releasing its first deep-field infrared images in July 2022.",
+        softwareArchitecture: "Controlled by a BAE RAD750 processor running VxWorks and C flight software for attitude control and wavefront sensing. Uniquely, JWST's Integrated Science Instrument Module (ISIM) executes high-level observation sequences using an onboard JavaScript interpreter (Script Processor) that translates ground-uploaded observation plans into instrument commands.",
+        timeline: [
+          { date: "25 Dec 2021", event: "Launched aboard Ariane 5 from French Guiana." },
+          { date: "24 Jan 2022", event: "Arrives at Sun–Earth L2 halo orbit." },
+          { date: "12 Jul 2022", event: "First full-color deep-field images released." }
+        ]
+      },
+      {
+        id: "chandrayaan-3",
+        name: "Chandrayaan-3",
+        subtitle: "First Lunar South Polar Soft Landing",
+        agency: "ISRO",
+        category: "Lunar",
+        status: "Completed (Surface mission Aug–Sep 2023)",
+        launchDate: "14 July 2023",
+        launchVehicle: "LVM3-M4",
+        launchSite: "Satish Dhawan Space Centre, SLP",
+        mass: "3,900 kg (Propulsion + Vikram Lander + Pragyan Rover)",
+        orbit: "Lunar Surface (69.37° S, 32.32° E — Statio Shiv Shakti)",
+        crew: "Uncrewed (Vikram Lander & Pragyan Rover)",
+        software: "Custom RTOS with Autonomous Hazard Detection & Avoidance (HDA) C/C++ closed-loop guidance",
+        overview: "Chandrayaan-3 is the third lunar exploration mission by the Indian Space Research Organisation (ISRO). On 23 August 2023, the Vikram lander achieved India's first soft landing on the Moon and humanity's first landing near the lunar south pole.",
+        missionHistory: "Following orbit-raising maneuvers around Earth and translunar injection, Chandrayaan-3 entered a 100 × 100 km lunar orbit. Vikram executed a four-phase autonomous powered descent—rough braking, attitude hold, fine braking, and terminal vertical descent—deploying the 26 kg six-wheeled Pragyan rover, which confirmed sulfur and trace elements in the south polar regolith.",
+        softwareArchitecture: "Engineered with a 'failure-based design' philosophy, Vikram's flight software in C/C++ on a radiation-hardened processor integrated Laser Doppler Velocimeter (LDV) sensors, star trackers, and real-time optical Hazard Detection and Avoidance (HDA) cameras to autonomously retarget landing coordinates even if multiple thrusters or sensors degraded.",
+        timeline: [
+          { date: "14 Jul 2023", event: "Launched aboard LVM3-M4 from Sriharikota." },
+          { date: "23 Aug 2023", event: "Vikram soft-lands near the lunar south pole (12:33 UTC)." },
+          { date: "2 Sep 2023", event: "Pragyan rover completes 100+ m traverse and enters lunar night sleep." }
+        ]
+      },
+      {
+        id: "change-6",
+        name: "Chang'e 6",
+        subtitle: "First Lunar Far-Side Sample Return Mission",
+        agency: "CNSA",
+        category: "Lunar",
+        status: "Completed (25 June 2024)",
+        launchDate: "3 May 2024",
+        launchVehicle: "Long March 5 Y8",
+        launchSite: "Wenchang Space Launch Site, LC-1",
+        mass: "8,200 kg (Orbiter, Lander, Ascender, Returner)",
+        orbit: "Apollo Basin, South Pole–Aitken Basin (Lunar Far Side)",
+        crew: "Uncrewed Robotic Sample Return",
+        software: "SpaceOS / Real-Time C/C++ autonomous terrain-relative navigation & Queqiao-2 relay telemetry",
+        overview: "Chang'e 6 is a robotic lunar exploration mission conducted by the China National Space Administration (CNSA) that achieved the first sample return from the far side of the Moon, delivering 1,935.3 grams of lunar material to Earth.",
+        missionHistory: "Because the lunar far side never faces Earth directly, Chang'e 6 relied on the Queqiao-2 relay satellite in a frozen elliptical lunar orbit. After landing in the southern Apollo crater within the South Pole–Aitken Basin, the lander drilled and scooped samples, launched its ascender stage back to lunar orbit for robotic docking, and returned the sample capsule to Inner Mongolia.",
+        softwareArchitecture: "Utilized autonomous vision-based obstacle avoidance during descent, automated lunar-orbit rendezvous and docking algorithms (operating without real-time Earth-in-the-loop control), and fault-tolerant SpaceOS real-time flight software.",
+        timeline: [
+          { date: "3 May 2024", event: "Launched from Wenchang aboard Long March 5." },
+          { date: "1 Jun 2024", event: "Touches down in Apollo Basin on the lunar far side." },
+          { date: "25 Jun 2024", event: "Return capsule lands in Siziwang Banner with 1,935.3 g of samples." }
+        ]
       }
     ];
+
+    let activeCategory = "ALL";
+    let showOnlySaved = false;
+    let currentOpenId = null;
+    let savedIds = JSON.parse(localStorage.getItem("cosmopedia_saved") || "[]");
 
     const grid = document.getElementById("cardsGrid");
     const searchInput = document.getElementById("searchInput");
     const agencyFilter = document.getElementById("agencyFilter");
 
-    function renderCards(list) {
-      grid.innerHTML = list.map((sc) => `
-        <div class="card" onclick="openArticle(${SPACECRAFT_DB.indexOf(sc)})">
-          <span class="badge">${sc.agency} • ${sc.launchDate}</span>
-          <h3>${sc.name}</h3>
-          <p>${sc.overview.slice(0, 120)}...</p>
-        </div>
-      `).join("");
+    function updateSavedCounter() {
+      document.getElementById("favCount").textContent = savedIds.length;
     }
 
-    function filterLocal() {
-      const q = searchInput.value.toLowerCase();
-      const ag = agencyFilter.value;
+    function renderDirectory() {
+      const query = searchInput.value.trim().toLowerCase();
+      const agency = agencyFilter.value;
+
       const filtered = SPACECRAFT_DB.filter(sc => {
-        const matchesAgency = ag === "ALL" || sc.agency.includes(ag);
-        const matchesText = sc.name.toLowerCase().includes(q) ||
-          sc.agency.toLowerCase().includes(q) ||
-          sc.crew.toLowerCase().includes(q) ||
-          sc.software.toLowerCase().includes(q);
-        return matchesAgency && matchesText;
+        const matchCat = activeCategory === "ALL" || sc.category === activeCategory;
+        const matchAgency = agency === "ALL" || sc.agency.toLowerCase().includes(agency.toLowerCase());
+        const matchSaved = !showOnlySaved || savedIds.includes(sc.id);
+        const matchText =
+          sc.name.toLowerCase().includes(query) ||
+          sc.subtitle.toLowerCase().includes(query) ||
+          sc.agency.toLowerCase().includes(query) ||
+          sc.crew.toLowerCase().includes(query) ||
+          sc.software.toLowerCase().includes(query) ||
+          sc.overview.toLowerCase().includes(query);
+        return matchCat && matchAgency && matchSaved && matchText;
       });
-      renderCards(filtered);
+
+      document.getElementById("countBadge").textContent = `${filtered.length} Spacecraft Shown`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; background: rgba(15,23,42,0.85); border: 1px solid var(--border); border-radius: 14px; padding: 24px; text-align: center;">
+            <p style="margin-bottom: 12px; color: #cbd5e1;">No local archive entries matched your current filter.</p>
+            <button onclick="searchGlobalArchive()">Search Global Wikipedia Space Archive for "${searchInput.value || 'Spacecraft'}"</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(sc => {
+        const isSaved = savedIds.includes(sc.id);
+        return `
+          <div class="card" onclick="openLocalArticle('${sc.id}')">
+            <div>
+              <div class="card-top">
+                <span class="agency-tag">${sc.agency}</span>
+                <span class="status-dot">${isSaved ? "★ Saved" : sc.launchDate}</span>
+              </div>
+              <h3>${sc.name}</h3>
+              <div class="card-meta">${sc.subtitle}</div>
+              <p>${sc.overview.slice(0, 138)}...</p>
+            </div>
+            <div class="card-footer">
+              <span><strong>Crew:</strong> ${sc.crew.split("(")[0].slice(0, 22)}${sc.crew.length > 22 ? "..." : ""}</span>
+              <span style="color: #7dd3fc;">Read Article →</span>
+            </div>
+          </div>
+        `;
+      }).join("");
     }
 
-    function openArticle(index) {
-      const sc = SPACECRAFT_DB[index];
-      document.getElementById("listView").style.display = "none";
+    function openLocalArticle(id) {
+      const sc = SPACECRAFT_DB.find(item => item.id === id);
+      if (!sc) return;
+      currentOpenId = id;
+      updateBookmarkButton();
+
+      document.getElementById("directoryView").style.display = "none";
       const articleView = document.getElementById("articleView");
       articleView.classList.add("active");
-      document.getElementById("articleContent").innerHTML = `
-        <h1>${sc.name}</h1>
-        <div class="infobox">
-          <table>
-            <tr><th>Organisation</th><td>${sc.agency}</td></tr>
-            <tr><th>Launch Date</th><td>${sc.launchDate}</td></tr>
-            <tr><th>Destination</th><td>${sc.destination}</td></tr>
-            <tr><th>Crew</th><td>${sc.crew}</td></tr>
-            <tr><th>Flight Software</th><td>${sc.software}</td></tr>
-          </table>
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      const timelineHtml = sc.timeline.map(t => `
+        <div class="timeline-item"><strong>${t.date}:</strong> ${t.event}</div>
+      `).join("");
+
+      document.getElementById("articleContainer").innerHTML = `
+        <div class="article-header">
+          <h1>${sc.name}</h1>
+          <div class="article-subtitle">${sc.subtitle} • ${sc.agency}</div>
         </div>
-        <h2>Overview</h2>
-        <p>${sc.overview}</p>
-        <h2>Mission History</h2>
-        <p>${sc.history}</p>
-        <h2>Software & Avionics Architecture</h2>
-        <p>${sc.avionics}</p>
+
+        <div class="article-layout">
+          <div class="article-body">
+            <div class="toc">
+              <div class="toc-title">Article Contents</div>
+              <ul>
+                <li><a href="#sec-overview">1. Mission Overview</a></li>
+                <li><a href="#sec-history">2. Flight & Mission History</a></li>
+                <li><a href="#sec-software">3. Flight Software & Avionics</a></li>
+                <li><a href="#sec-timeline">4. Key Mission Milestones</a></li>
+              </ul>
+            </div>
+
+            <h2 id="sec-overview">1. Mission Overview</h2>
+            <p>${sc.overview}</p>
+
+            <h2 id="sec-history">2. Flight & Mission History</h2>
+            <p>${sc.missionHistory}</p>
+
+            <h2 id="sec-software">3. Flight Software & Avionics Architecture</h2>
+            <p>${sc.softwareArchitecture}</p>
+
+            <h2 id="sec-timeline">4. Key Mission Milestones</h2>
+            <div class="timeline-list">${timelineHtml}</div>
+          </div>
+
+          <aside class="infobox">
+            <div class="infobox-banner">${sc.name} — Telemetry & Specs</div>
+            <table>
+              <tr><th>Organisation</th><td>${sc.agency}</td></tr>
+              <tr><th>Mission Status</th><td>${sc.status}</td></tr>
+              <tr><th>Launch Date</th><td>${sc.launchDate}</td></tr>
+              <tr><th>Launch Vehicle</th><td>${sc.launchVehicle}</td></tr>
+              <tr><th>Launch Site</th><td>${sc.launchSite}</td></tr>
+              <tr><th>Launch Mass</th><td>${sc.mass}</td></tr>
+              <tr><th>Orbit / Target</th><td>${sc.orbit}</td></tr>
+              <tr><th>Crew</th><td>${sc.crew}</td></tr>
+              <tr><th>Onboard Software</th><td>${sc.software}</td></tr>
+            </table>
+          </aside>
+        </div>
       `;
     }
 
-    async function searchWikipedia() {
-      const query = searchInput.value.trim();
-      if (!query) return;
-      grid.innerHTML = "<p>Searching global spacecraft archives...</p>";
+    async function searchGlobalArchive() {
+      const rawQuery = searchInput.value.trim();
+      if (!rawQuery) {
+        alert("Type any spacecraft name first (e.g., Cassini, New Horizons, Perseverance, Chandrayaan-2, Gemini 4).");
+        return;
+      }
+
+      grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; padding: 30px;">Querying global spacecraft encyclopedia for <strong>${rawQuery}</strong>...</p>`;
+
       try {
-        const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(query)}`);
-        if (!res.ok) throw new Error("Not found");
-        const data = await res.json();
-        document.getElementById("listView").style.display = "none";
+        const searchRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(rawQuery + " spacecraft")}&format=json&origin=*`);
+        const searchData = await searchRes.json();
+        const topHit = searchData?.query?.search?.[0];
+        if (!topHit) throw new Error("No match");
+
+        const pageTitle = topHit.title;
+        const extractRes = await fetch(`https://en.wikipedia.org/w/api.php?action=query&prop=extracts&explaintext=1&titles=${encodeURIComponent(pageTitle)}&format=json&origin=*`);
+        const extractData = await extractRes.json();
+        const pages = extractData.query.pages;
+        const pageObj = pages[Object.keys(pages)[0]];
+        const fullText = pageObj.extract || "No detailed article text available.";
+
+        // Parse Wikipedia == Headings == into structured sections
+        const rawSections = fullText.split(/\n==+\s*/);
+        const leadParagraphs = rawSections[0].split("\n").filter(p => p.trim()).map(p => `<p>${p}</p>`).join("");
+        let bodySectionsHtml = "";
+
+        for (let i = 1; i < Math.min(rawSections.length, 9); i++) {
+          const splitHeader = rawSections[i].split(/\s*==+\n/);
+          if (splitHeader.length === 2) {
+            const secTitle = splitHeader[0].trim();
+            if (["References", "External links", "Further reading", "See also"].includes(secTitle)) continue;
+            const paragraphs = splitHeader[1].split("\n").filter(p => p.trim()).map(p => `<p>${p}</p>`).join("");
+            if (paragraphs) {
+              bodySectionsHtml += `<h2>${secTitle}</h2>${paragraphs}`;
+            }
+          }
+        }
+
+        currentOpenId = null;
+        document.getElementById("bookmarkBtn").style.display = "none";
+        document.getElementById("directoryView").style.display = "none";
         const articleView = document.getElementById("articleView");
         articleView.classList.add("active");
-        document.getElementById("articleContent").innerHTML = `
-          <h1>${data.title}</h1>
-          <div class="infobox">
-            <table>
-              <tr><th>Archive Source</th><td>Global Space Encyclopedia (Wikipedia API)</td></tr>
-              <tr><th>Classification</th><td>${data.description || "Spacecraft / Space Mission"}</td></tr>
-            </table>
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        document.getElementById("articleContainer").innerHTML = `
+          <div class="article-header">
+            <h1>${pageTitle}</h1>
+            <div class="article-subtitle">Global Orbital Archive • Live Multi-Section Encyclopedia Entry</div>
           </div>
-          
-          <h2>Encyclopedia Summary</h2>
-          <p>${data.extract}</p>
+          <div class="article-layout">
+            <div class="article-body">
+              <h2>Overview</h2>
+              ${leadParagraphs}
+              ${bodySectionsHtml}
+            </div>
+            <aside class="infobox">
+              <div class="infobox-banner">Archive Record</div>
+              <table>
+                <tr><th>Mission / Craft</th><td>${pageTitle}</td></tr>
+                <tr><th>Database</th><td>Global Space Encyclopedia</td></tr>
+                <tr><th>Query Matched</th><td>${rawQuery}</td></tr>
+              </table>
+            </aside>
+          </div>
         `;
-      } catch (e) {
-        grid.innerHTML = "<p>No exact spacecraft article found. Try searching the full mission name (e.g., 'Voyager 2' or 'Artemis 1').</p>";
+      } catch (err) {
+        renderDirectory();
+        alert("Could not retrieve an external article for that query. Try a full mission name like 'Cassini–Huygens' or 'Mars Perseverance'.");
       }
     }
 
     function closeArticle() {
       document.getElementById("articleView").classList.remove("active");
-      document.getElementById("listView").style.display = "block";
-      filterLocal();
+      document.getElementById("directoryView").style.display = "block";
+      document.getElementById("bookmarkBtn").style.display = "inline-block";
+      renderDirectory();
     }
 
-    searchInput.addEventListener("input", filterLocal);
-    agencyFilter.addEventListener("change", filterLocal);
-    renderCards(SPACECRAFT_DB);
+    function toggleBookmarkCurrent() {
+      if (!currentOpenId) return;
+      if (savedIds.includes(currentOpenId)) {
+        savedIds = savedIds.filter(id => id !== currentOpenId);
+      } else {
+        savedIds.push(currentOpenId);
+      }
+      localStorage.setItem("cosmopedia_saved", JSON.stringify(savedIds));
+      updateSavedCounter();
+      updateBookmarkButton();
+    }
+
+    function updateBookmarkButton() {
+      const btn = document.getElementById("bookmarkBtn");
+      if (!currentOpenId) return;
+      btn.textContent = savedIds.includes(currentOpenId) ? "★ Saved in Bookmarks" : "☆ Save Mission";
+    }
+
+    function toggleFavoritesView() {
+      showOnlySaved = !showOnlySaved;
+      document.getElementById("favFilterBtn").classList.toggle("active", showOnlySaved);
+      closeArticle();
+    }
+
+    document.querySelectorAll(".chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        activeCategory = chip.dataset.cat;
+        renderDirectory();
+      });
+    });
+
+    searchInput.addEventListener("input", renderDirectory);
+    agencyFilter.addEventListener("change", renderDirectory);
+    updateSavedCounter();
+    renderDirectory();
   </script>
 </body>
 </html>
