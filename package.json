@@ -1,12 +1,11 @@
 {
   "name": "cosmopedia",
   "version": "1.0.0",
-  "description": "Universal Spacecraft & Spaceflight Encyclopedia",
-  "dependencies": {
-    "@capacitor/android": "^6.0.0",
-    "@capacitor/core": "^6.0.0"
-  },
-  "devDependencies": {
-    "@capacitor/cli": "^6.0.0"
+  "private": true,
+  "description": "Cosmopedia: Spacecraft Mission Explorer",
+  "scripts": {
+    "copy-web": "node scripts/copy-web.js",
+    "sync": "node scripts/copy-web.js && cap sync android",
+    "open": "cap open android"
   }
 }
